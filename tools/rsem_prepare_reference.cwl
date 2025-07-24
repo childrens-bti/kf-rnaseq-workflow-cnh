@@ -32,4 +32,7 @@ outputs:
     type: File
     outputBinding: 
       glob: '*tar.gz'
-
+  rsem_fasta:
+    type: File
+    outputBinding:
+      glob "$(inputs.reference_name)/*.fa"
