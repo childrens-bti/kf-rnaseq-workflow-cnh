@@ -6,43 +6,45 @@ doc: |
   Build references for STAR, RSEM, and Kallisto for GRCm39
 
 requirements:
-  - class: ScatterFeatureRequirement
-  - class: StepInputExpressionRequirement
   - class: InlineJavascriptRequirement
 
 inputs:
   reference_fasta:
     type: File
-    doc: "Reference fasta file"
-
+    doc: "Reference FASTA file (e.g., GRCm39.primary_assembly.genome.fa)"
   reference_name:
     type: string
-    doc: "Output file prefix. Recommend format: RSEM_<SOURCE><Version>/"
-
+    doc: "RSEM output prefix, e.g., RSEM_GRCm39"
   reference_gtf:
     type: File?
-    doc: "Gene model definitions. This OR GFF required"
-
+    doc: "Gene model (GTF). Use this OR GFF3."
   reference_gff:
     type: File?
-    doc: "Gene model definitions. This OR GTF required"
-
+    doc: "Gene model (GFF3). Use this OR GTF."
   transcript_idx:
-    type: File
-    doc: "Kallisto index file name"
+    type: string
+    doc: "Kallisto index filename to CREATE"
+    default: "kallisto_GRCm39.idx"
+  sjdbOverhang:
+    type: int?
+    default: 100
+  runThreadN:
+    type: int?
+    default: 16
+  genomeDir:
+    type: string?
+    default: "star_index_GRCm39"
 
 outputs:
   rsem_reference_file:
     type: File
     outputSource: rsem_prepare_reference/rsem_reference
-
   kallisto_index_output:
     type: File
     outputSource: kallisto_index/index_out
-
   star_index_output:
-    type: Directory
-    outputSource: star_index/star_index
+    type: File
+    outputSource: star_index/star_ref
 
 steps:
   rsem_prepare_reference:
@@ -64,10 +66,10 @@ steps:
   star_index:
     run: ../tools/star_2.7.10a_genome_generate.cwl
     in:
-      genomeFasta: reference_fasta
-      annotationGTF: reference_gtf
-      sjdbOverhang: { default: 100 }
-      outDir: { default: "star_index_GRCm39" }
-      runThreadN: { default: 8 }
-    out: [star_index]
+      genome_fa: reference_fasta
+      gtf: reference_gtf
+      sjdbOverhang: sjdbOverhang
+      genomeDir: genomeDir
+      runThreadN: runThreadN
+    out: [star_ref]
 
