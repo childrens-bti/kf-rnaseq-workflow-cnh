@@ -35,4 +35,4 @@ outputs:
   rsem_fasta:
     type: File
     outputBinding:
-      glob "$(inputs.reference_name)/*.fa"
+      glob: "$(inputs.reference_name)/*.fa"
