@@ -32,6 +32,12 @@ outputs:
     type: File
     outputBinding: 
       glob: '*tar.gz'
+
+ rsem_transcripts_fa:
+    type: File
+    outputBinding:
+      glob: "*transcripts.fa"
+
   rsem_fasta:
     type: File
     outputBinding:

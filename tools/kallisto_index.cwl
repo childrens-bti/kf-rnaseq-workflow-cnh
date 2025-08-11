@@ -21,7 +21,7 @@ arguments:
       kallisto index
 
 inputs:
-  transcript_idx: { type: File, inputBinding: { position: 2, prefix: '-i' }, doc: "Kallisto index file name" }
+  transcript_idx: { type: string, inputBinding: { position: 2, prefix: '-i' }, doc: "Kallisto index file name" }
   transcript_fasta: { type: File, inputBinding: { position: 3 }, doc: "Input transcript fasta" }
 
 
@@ -29,4 +29,4 @@ outputs:
   index_out:
     type: File
     outputBinding:
-      glob: '*.idx'
+      glob: "$(inputs.transcript_idx)"

@@ -54,13 +54,13 @@ steps:
       reference_name: reference_name
       reference_gff: reference_gff
       reference_gtf: reference_gtf
-    out: [rsem_reference, rsem_fasta]
+      out: [rsem_reference, rsem_transcripts_fa, rsem_fasta]   
 
   kallisto_index:
     run: ../tools/kallisto_index.cwl
     in:
       transcript_idx: transcript_idx
-      transcript_fasta: rsem_prepare_reference/rsem_fasta
+      transcript_fasta: rsem_prepare_reference/rsem_transcripts_fa 
     out: [index_out]
 
   star_index:
