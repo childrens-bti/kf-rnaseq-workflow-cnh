@@ -3,7 +3,7 @@ class: Workflow
 id: build_star_rsem_kallisto_references
 label: "build_star_rsem_kallisto_references"
 doc: |
-  Build references for STAR, RSEM, and Kallisto for GRCm39
+  Build references for STAR, RSEM, and Kallisto
 
 requirements:
   - class: InlineJavascriptRequirement
