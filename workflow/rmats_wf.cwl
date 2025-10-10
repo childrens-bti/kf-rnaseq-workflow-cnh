@@ -20,7 +20,7 @@ doc: |
    - `variable_read_length`: Allow reads with lengths that differ from --readLength to be processed. --readLength will still be used to determine IncFormLen and SkipFormLen
    - `read_type`: Select one option for input read type either paired or single. Tool default: paired
    - `strandedness`: Select one option for input strandedness. Tool default: fr-unstranded
-   - `novel_splice_sites:`: Select for novel splice site detection or unannotated splice sites. 'true' to detect or add this parameter, 'false' to disable denovo detection. Tool Default: false
+   - `novel_splice_sites:`: Select for novel splice site detection or unannotated splice sites. 'true' to detect or add this parameter, 'false' to disable denovo detection. Tool Default: true
    - `stat_off:`: Select to skip statistical analysis, either between two groups or on single sample group. 'true' to add this parameter. Tool default: false
    - `allow_clipping:`: Allow alignments with soft or hard clipping to be used
    - `output_basename:`: String to use as basename for output files
@@ -68,9 +68,9 @@ inputs:
       - fr-secondstrand
       name: strandedness
     doc: "Select one option for input strandedness. Tool default: fr-unstranded"
-  novel_splice_sites: {type: 'boolean?', doc: "Select for novel splice site detection\
+  novel_splice_sites: {type: 'boolean?', default: true, doc: "Select for novel splice site detection\
       \ or unannotated splice sites. 'true' to detect or add this parameter, 'false'\
-      \ to disable denovo detection. Tool Default: false"}
+      \ to disable denovo detection. Tool Default: true"}
   stat_off: {type: 'boolean?', doc: "Select to skip statistical analysis, either between\
       \ two groups or on single sample group. 'true' to add this parameter. Tool default:\
       \ false"}
