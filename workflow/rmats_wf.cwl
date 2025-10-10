@@ -40,8 +40,10 @@ requirements:
 - class: InlineJavascriptRequirement
 inputs:
   gtf_annotation: {type: 'File', doc: "Input gtf annotation file."}
-  sample_1_bams: {type: 'File[]', doc: "Input sample 1 bam files."}
-  sample_2_bams: {type: 'File[]?', doc: "Input sample 2 bam files."}
+  sample_1_bams: {type: 'File[]', secondaryFiles: [{pattern: '.bai', required: false}, {pattern: '^.bai', required: false}, {pattern: '.crai',
+        required: false}, {pattern: '^.crai', required: false}], doc: "Input sample 1 BAM/CRAM files"}
+  sample_2_bams: {type: 'File[]', secondaryFiles: [{pattern: '.bai', required: false}, {pattern: '^.bai', required: false}, {pattern: '.crai',
+        required: false}, {pattern: '^.crai', required: false}], doc: "Input sample 2 BAM/CRAM files"}
   read_length: {type: 'int?', doc: "Input read length for sample reads."}
   variable_read_length: {type: 'boolean?', doc: "Allow reads with lengths that differ\
       \ from --readLength to be processed. --readLength will still be used to determine\
@@ -77,6 +79,10 @@ inputs:
   output_basename: {type: 'string', doc: "String to use as basename for output files"}
   rmats_threads: {type: 'int?', doc: "Threads to allocate to RMATs."}
   rmats_ram: {type: 'int?', doc: "GB of RAM to allocate to RMATs."}
+  reference_fasta: {type: 'File', doc: "GRCh38.primary_assembly.genome.fa", "sbg:suggestedValue": {class: File, path: 5f500135e4b0370371c051b4,
+      name: GRCh38.primary_assembly.genome.fa, secondaryFiles: [{class: File, path: 62866da14d85bc2e02ba52db, name: GRCh38.primary_assembly.genome.fa.fai}]},
+    secondaryFiles: ['.fai']}
+
 outputs:
   filtered_alternative_3_prime_splice_sites_jc: {type: 'File', outputSource: filter_alt_3_prime/output,
     doc: "Alternative 3 prime splice sites JC.txt output from RMATs containing only\
@@ -103,6 +109,26 @@ outputs:
   rmats_fromGTF: {type: 'File[]?', outputSource: rmats_both_bam/fromGTF}
 
 steps:
+  samtools_cram_to_bam_sample_1:
+    run: ../tools/samtools_cram_to_bam.cwl
+    scatter: sample_1_bams
+    when: |
+      $(inputs.input_cram.nameext != '.bam')
+    in:
+      input_cram: sample_1_bams
+      output_basename: output_basename
+      reference: reference_fasta
+    out: [output]
+  samtools_cram_to_bam_sample_2:
+    run: ../tools/samtools_cram_to_bam.cwl
+    scatter: sample_2_bams
+    when: |
+      $(inputs.input_cram.nameext != '.bam')
+    in:
+      input_cram: sample_2_bams
+      output_basename: output_basename
+      reference: reference_fasta
+    out: [output]
   samtools_readlength_bam:
     run: ../tools/samtools_readlength_bam.cwl
     in:
@@ -115,8 +141,12 @@ steps:
     run: ../tools/rmats_both_bam.cwl
     in:
       gtf_annotation: gtf_annotation
-      sample_1: sample_1_bams
-      sample_2: sample_2_bams
+      sample_1:
+        source: [samtools_cram_to_bam_sample_1/output, sample_1_bams]
+        pickValue: first_non_null
+      sample_2:
+        source: [samtools_cram_to_bam_sample_2/output, sample_2_bams]
+        pickValue: first_non_null
       read_length:
         source: [read_length, samtools_readlength_bam/top_readlength]
         pickValue: first_non_null
