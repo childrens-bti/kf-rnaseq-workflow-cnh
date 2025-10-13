@@ -42,7 +42,7 @@ inputs:
   gtf_annotation: {type: 'File', doc: "Input gtf annotation file."}
   sample_1_bams: {type: 'File[]', secondaryFiles: [{pattern: '.bai', required: false}, {pattern: '^.bai', required: false}, {pattern: '.crai',
         required: false}, {pattern: '^.crai', required: false}], doc: "Input sample 1 BAM/CRAM files"}
-  sample_2_bams: {type: 'File[]', secondaryFiles: [{pattern: '.bai', required: false}, {pattern: '^.bai', required: false}, {pattern: '.crai',
+  sample_2_bams: {type: 'File[]?', secondaryFiles: [{pattern: '.bai', required: false}, {pattern: '^.bai', required: false}, {pattern: '.crai',
         required: false}, {pattern: '^.crai', required: false}], doc: "Input sample 2 BAM/CRAM files"}
   read_length: {type: 'int?', doc: "Input read length for sample reads."}
   variable_read_length: {type: 'boolean?', doc: "Allow reads with lengths that differ\
@@ -123,7 +123,7 @@ steps:
     run: ../tools/samtools_cram_to_bam.cwl
     scatter: sample_2_bams
     when: |
-      $(inputs.input_cram.nameext != '.bam')
+      $(inputs.input_cram != null && inputs.input_cram.nameext != '.bam')
     in:
       input_cram: sample_2_bams
       output_basename: output_basename
@@ -133,7 +133,7 @@ steps:
     run: ../tools/samtools_readlength_bam.cwl
     in:
       input_bam:
-        source: sample_1_bams
+        source: samtools_cram_to_bam_sample_1/output
         valueFrom: |
           $(self[0])
     out: [output, top_readlength, variable_readlength]
