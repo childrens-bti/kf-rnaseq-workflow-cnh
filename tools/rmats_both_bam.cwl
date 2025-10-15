@@ -17,7 +17,7 @@ requirements:
     - entryname: sample_2.txt
       entry: |
         $(inputs.sample_2 ? inputs.sample_2.map(function(e){return e.path}).join() : '')
-baseCommand: []
+baseCommand: ["python", "/rmats/rmats.py"]
 arguments:
   - position: 3
     shellQuote: false
