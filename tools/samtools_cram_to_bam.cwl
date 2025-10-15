@@ -28,7 +28,7 @@ inputs:
     inputBinding: { position: 1, prefix: "--reference" } }
 outputs:
   output:
-    type: 'File[]'
+    type: 'File'
     outputBinding:
       glob: '*.bam'
     secondaryFiles: [^.bai]
