@@ -141,12 +141,8 @@ steps:
     run: ../tools/rmats_both_bam.cwl
     in:
       gtf_annotation: gtf_annotation
-      sample_1:
-        source: [samtools_cram_to_bam_sample_1/output, sample_1_bams]
-        pickValue: first_non_null
-      sample_2:
-        source: [samtools_cram_to_bam_sample_2/output, sample_2_bams]
-        pickValue: first_non_null
+      sample_1: samtools_cram_to_bam_sample_1/output
+      sample_2: samtools_cram_to_bam_sample_2/output
       read_length:
         source: [read_length, samtools_readlength_bam/top_readlength]
         pickValue: first_non_null
