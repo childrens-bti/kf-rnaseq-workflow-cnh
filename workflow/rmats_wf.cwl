@@ -111,7 +111,7 @@ outputs:
 steps:
   samtools_cram_to_bam_sample_1:
     run: ../tools/samtools_cram_to_bam.cwl
-    scatter: sample_1_bams
+    scatter: input_cram
     when: |
       $(inputs.input_cram.nameext != '.bam')
     in:
@@ -121,7 +121,7 @@ steps:
     out: [output]
   samtools_cram_to_bam_sample_2:
     run: ../tools/samtools_cram_to_bam.cwl
-    scatter: sample_2_bams
+    scatter: input_cram
     when: |
       $(inputs.input_cram != null && inputs.input_cram.nameext != '.bam')
     in:
