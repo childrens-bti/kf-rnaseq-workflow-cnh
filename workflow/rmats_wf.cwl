@@ -129,11 +129,21 @@ steps:
       output_basename: output_basename
       reference: reference_fasta
     out: [output]
+  make_null_sample_1:
+    run: ../tools/make_null.cwl
+    in:
+      input_files: samtools_cram_to_bam_sample_1/output
+    out: [output]
+  make_null_sample_2:
+    run: ../tools/make_null.cwl
+    in:
+      input_files: samtools_cram_to_bam_sample_2/output
+    out: [output]
   samtools_readlength_bam:
     run: ../tools/samtools_readlength_bam.cwl
     in:
       input_bam:
-        source: [samtools_cram_to_bam_sample_1/output, sample_1_bams]
+        source: [make_null_sample_1/output, sample_1_bams]
         pickValue: first_non_null
         valueFrom: |
           $(self[0])
@@ -143,10 +153,10 @@ steps:
     in:
       gtf_annotation: gtf_annotation
       sample_1:
-        source: [samtools_cram_to_bam_sample_1/output, sample_1_bams]
+        source: [make_null_sample_1/output, sample_1_bams]
         pickValue: first_non_null
       sample_2:
-        source: [samtools_cram_to_bam_sample_2/output, sample_2_bams]
+        source: [make_null_sample_2/output, sample_2_bams]
         pickValue: first_non_null
       read_length:
         source: [read_length, samtools_readlength_bam/top_readlength]
