@@ -268,6 +268,7 @@ doc: |
   ### rmats
   - `run_rmats`: Set to false to disable rmats
   - `rmats_variable_read_length`: Allow reads with lengths that differ from --readLength to be processed. --readLength will still be used to determine IncFormLen and SkipFormLen.
+  - `individual_counts`: Output individualCounts.[AS_Event].txt files and add the individual count columns to [AS_Event].MATS.JC.txt"
   - `rmats_novel_splice_sites`: Select for novel splice site detection or unannotated splice sites. 'true' to detect or add this parameter, 'false' to disable denovo detection. Tool Default: true
   - `rmats_stat_off`: Select to skip statistical analysis, either between two groups or on single sample group. 'true' to add this parameter. Tool default: false
   - `rmats_allow_clipping`: Allow alignments with soft or hard clipping to be used.
@@ -512,6 +513,7 @@ inputs:
   run_rmats: {type: 'boolean?', default: true, doc: "Set to false to disable rmats"}
   rmats_variable_read_length: {type: 'boolean?', default: true, doc: "Allow reads with lengths that differ from --readLength to be
       processed. --readLength will still be used to determine IncFormLen and SkipFormLen."}
+  rmats_individual_counts: { type: 'boolean?', doc: "Output individualCounts.[AS_Event].txt files and add the individual count columns to [AS_Event].MATS.JC.txt", default: true }
   rmats_novel_splice_sites: {type: 'boolean?', default: true, doc: "Select for novel splice site detection or unannotated splice sites. 'true' to
       detect or add this parameter, 'false' to disable denovo detection. Tool Default: true"}
   rmats_stat_off: {type: 'boolean?', doc: "Select to skip statistical analysis, either between two groups or on single sample group.
@@ -725,6 +727,7 @@ steps:
           $([self])
       read_length: read_length_median
       variable_read_length: rmats_variable_read_length
+      individual_counts: rmats_individual_counts
       read_type:
         source: bam_strandness/is_paired_end
         valueFrom: |

@@ -76,6 +76,7 @@ inputs:
       itermediate files (fromGTF*) useful in novel splicing analysis. Tool default: false
   read_length: { type: 'int', inputBinding: { position: 2, prefix: '--readLength' }, doc: "Input read length for sample reads." }
   variable_read_length: { type: 'boolean?', inputBinding: { position: 2, prefix: '--variable-read-length' }, doc: "Allow reads with lengths that differ from --readLength to be processed. --readLength will still be used to determine IncFormLen and SkipFormLen.", default: true }
+  individual_counts: { type: 'boolean?', inputBinding: { position: 2, prefix: '--individual-counts' }, doc: "Output individualCounts.[AS_Event].txt files and add the individual count columns to [AS_Event].MATS.JC.txt", default: true }
   anchor_length: { type: 'int?', inputBinding: { position: 2, prefix: '--anchorLength' }, doc: "The anchor length. Tool default: 1" }
   tophat_anchor_length: { type: 'int?', inputBinding: { position: 2, prefix: '--tophatAnchor' }, doc: "The 'anchor length' or 'overhang length' used in the aligner. At least 'anchor length' NT must be mapped to each end of a given junction. (Only if using fastq). Tool default: 6." }
   star_indicies: { type: 'Directory?', inputBinding: { position: 2, prefix: '--bi' }, doc: "The directory name of the STAR binary indices (name of the directory that contains the SA file). (Only if using fastq)" }

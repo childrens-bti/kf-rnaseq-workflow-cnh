@@ -18,6 +18,7 @@ doc: |
    - `sample_2_bams:`: Input sample 2 bam files
    - `read_length:`: Input read length for sample reads
    - `variable_read_length`: Allow reads with lengths that differ from --readLength to be processed. --readLength will still be used to determine IncFormLen and SkipFormLen
+   - `individual_counts`: Output individualCounts.[AS_Event].txt files and add the individual count columns to [AS_Event].MATS.JC.txt"
    - `read_type`: Select one option for input read type either paired or single. Tool default: paired
    - `strandedness`: Select one option for input strandedness. Tool default: fr-unstranded
    - `novel_splice_sites:`: Select for novel splice site detection or unannotated splice sites. 'true' to detect or add this parameter, 'false' to disable denovo detection. Tool Default: true
@@ -48,6 +49,7 @@ inputs:
   variable_read_length: {type: 'boolean?', doc: "Allow reads with lengths that differ\
       \ from --readLength to be processed. --readLength will still be used to determine\
       \ IncFormLen and SkipFormLen."}
+  individual_counts: { type: 'boolean?', doc: "Output individualCounts.[AS_Event].txt files and add the individual count columns to [AS_Event].MATS.JC.txt", default: true }
   read_type:
     type:
     - "null"
@@ -164,6 +166,7 @@ steps:
       variable_read_length:
         source: [variable_read_length, samtools_readlength_bam/variable_readlength]
         pickValue: first_non_null
+      individual_counts: individual_counts
       read_type: read_type
       strandedness: strandedness
       allow_clipping: allow_clipping
