@@ -83,7 +83,7 @@ inputs:
   cutoff_splice_diff: { type: 'float?', doc: "The cutoff used in the null hypothesis test for differential splicing. Tool default is 0.0001 for 0.01% difference. Valid: 0 <= cutoff < 1. Does not apply to the paired stats model" }
   stat_off: { type: 'boolean?', inputBinding: { position: 2, prefix: '--statoff' }, doc: "Select to skip statistical analysis, either between two groups or on single sample group. 'true' to add this parameter. Tool default: false" }
   paired_stats: { type: 'boolean?', inputBinding: { position: 2, prefix: '--paired-stats' }, doc: "Use the paired stats model" }
-  novel_splice_sites: { type: 'boolean?', inputBinding: { position: 2, prefix: '--novelSS' }, doc: "Select for novel splice site detection or unannotated splice sites. 'true' to detect or add this parameter, 'false' to disable denovo detection. Tool Default: false" }
+  novel_splice_sites: { type: 'boolean?', inputBinding: { position: 2, prefix: '--novelSS' }, doc: "Select for novel splice site detection or unannotated splice sites. 'true' to detect or add this parameter, 'false' to disable denovo detection. Tool Default: true", default: true }
   maximum_exon_length: { type: 'int?', inputBinding: { position: 2, prefix: '--mel' }, doc: "Maximum Exon Length. Only impacts --novelSS behavior. Tool Default: 500" }
   minimum_intron_length: { type: 'int?', inputBinding: { position: 2, prefix: '--mil' }, doc: "Minimum Intron Length. Only impacts --novelSS behavior. Tool Default: 50" }
   allow_clipping: { type: 'boolean?', inputBinding: { position: 2, prefix: '--allow-clipping' }, doc: "Allow alignments with soft or hard clipping to be used." }
