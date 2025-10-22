@@ -13,7 +13,7 @@ doc: |
     <img src="docs/kids_first_logo.svg" alt="Kids First repository logo" width="660px" />
   </p>
   <p align="center">
-    <a href="https://github.com/kids-first/kf-rnaseq-workflow/blob/main/LICENSE"><img src="https://img.shields.io/github/license/kids-first/kf-rnaseq-workflow.svg?style=for-the-badge"></a>
+    <a href="https://github.com/childrens-bti/kf-rnaseq-workflow-cnh/blob/master/LICENSE"><img src="https://img.shields.io/github/license/childrens-bti/kf-rnaseq-workflow-cnh.svg?style=for-the-badge"></a>
   </p>
 
   ## Introduction
@@ -268,7 +268,8 @@ doc: |
   ### rmats
   - `run_rmats`: Set to false to disable rmats
   - `rmats_variable_read_length`: Allow reads with lengths that differ from --readLength to be processed. --readLength will still be used to determine IncFormLen and SkipFormLen.
-  - `rmats_novel_splice_sites`: Select for novel splice site detection or unannotated splice sites. 'true' to detect or add this parameter, 'false' to disable denovo detection. Tool Default: false
+  - `individual_counts`: Output individualCounts.[AS_Event].txt files and add the individual count columns to [AS_Event].MATS.JC.txt"
+  - `rmats_novel_splice_sites`: Select for novel splice site detection or unannotated splice sites. 'true' to detect or add this parameter, 'false' to disable denovo detection. Tool Default: true
   - `rmats_stat_off`: Select to skip statistical analysis, either between two groups or on single sample group. 'true' to add this parameter. Tool default: false
   - `rmats_allow_clipping`: Allow alignments with soft or hard clipping to be used.
   - `rmats_threads`: Threads to allocate to RMATs.
@@ -512,8 +513,9 @@ inputs:
   run_rmats: {type: 'boolean?', default: true, doc: "Set to false to disable rmats"}
   rmats_variable_read_length: {type: 'boolean?', default: true, doc: "Allow reads with lengths that differ from --readLength to be
       processed. --readLength will still be used to determine IncFormLen and SkipFormLen."}
-  rmats_novel_splice_sites: {type: 'boolean?', doc: "Select for novel splice site detection or unannotated splice sites. 'true' to
-      detect or add this parameter, 'false' to disable denovo detection. Tool Default: false"}
+  rmats_individual_counts: { type: 'boolean?', doc: "Output individualCounts.[AS_Event].txt files and add the individual count columns to [AS_Event].MATS.JC.txt", default: true }
+  rmats_novel_splice_sites: {type: 'boolean?', default: true, doc: "Select for novel splice site detection or unannotated splice sites. 'true' to
+      detect or add this parameter, 'false' to disable denovo detection. Tool Default: true"}
   rmats_stat_off: {type: 'boolean?', doc: "Select to skip statistical analysis, either between two groups or on single sample group.
       'true' to add this parameter. Tool default: false"}
   rmats_allow_clipping: {type: 'boolean?', doc: "Allow alignments with soft or hard clipping to be used."}
@@ -725,6 +727,7 @@ steps:
           $([self])
       read_length: read_length_median
       variable_read_length: rmats_variable_read_length
+      individual_counts: rmats_individual_counts
       read_type:
         source: bam_strandness/is_paired_end
         valueFrom: |
@@ -740,6 +743,7 @@ steps:
       output_basename: basename_picker/outname
       rmats_threads: rmats_threads
       rmats_ram: rmats_ram
+      reference_fasta: reference_fasta
     out: [filtered_alternative_3_prime_splice_sites_jc, filtered_alternative_5_prime_splice_sites_jc, filtered_mutually_exclusive_exons_jc,
       filtered_retained_introns_jc, filtered_skipped_exons_jc, raw_alternative_3_prime_splice_sites_jc, raw_alternative_5_prime_splice_sites_jc,
       raw_mutually_exclusive_exons_jc, raw_retained_introns_jc, raw_skipped_exons_jc, raw_temp_read_outcomes, raw_summary_file, rmats_fromGTF]
@@ -860,5 +864,5 @@ hints:
 - SE
 - STAR
 "sbg:links":
-- id: 'https://github.com/kids-first/kf-rnaseq-workflow/releases/tag/v5.0.2'
+- id: 'https://github.com/childrens-bti/kf-rnaseq-workflow-cnh/releases/tag/v1.1.0'
   label: github-release

@@ -8,7 +8,7 @@ Our legacy workflow is still available as [v3.0.1](https://github.com/kids-first
   <img src="docs/kids_first_logo.svg" alt="Kids First repository logo" width="660px" />
 </p>
 <p align="center">
-  <a href="https://github.com/kids-first/kf-rnaseq-workflow/blob/main/LICENSE"><img src="https://img.shields.io/github/license/kids-first/kf-rnaseq-workflow.svg?style=for-the-badge"></a>
+  <a href="https://github.com/childrens-bti/kf-rnaseq-workflow-cnh/blob/master/LICENSE"><img src="https://img.shields.io/github/license/childrens-bti/kf-rnaseq-workflow-cnh.svg?style=for-the-badge"></a>
 </p>
 
 ## Introduction

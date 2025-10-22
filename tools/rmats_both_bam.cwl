@@ -5,7 +5,7 @@ requirements:
   - class: ShellCommandRequirement
   - class: InlineJavascriptRequirement
   - class: DockerRequirement
-    dockerPull: 'xinglab/rmats:v4.1.2'
+    dockerPull: 'xinglab/rmats:v4.3.0'
   - class: ResourceRequirement
     ramMin: $(inputs.ram * 1000)
     coresMin: $(inputs.threads)
@@ -17,7 +17,7 @@ requirements:
     - entryname: sample_2.txt
       entry: |
         $(inputs.sample_2 ? inputs.sample_2.map(function(e){return e.path}).join() : '')
-baseCommand: []
+baseCommand: ["python", "/rmats/rmats.py"]
 arguments:
   - position: 3
     shellQuote: false
@@ -76,13 +76,14 @@ inputs:
       itermediate files (fromGTF*) useful in novel splicing analysis. Tool default: false
   read_length: { type: 'int', inputBinding: { position: 2, prefix: '--readLength' }, doc: "Input read length for sample reads." }
   variable_read_length: { type: 'boolean?', inputBinding: { position: 2, prefix: '--variable-read-length' }, doc: "Allow reads with lengths that differ from --readLength to be processed. --readLength will still be used to determine IncFormLen and SkipFormLen.", default: true }
+  individual_counts: { type: 'boolean?', inputBinding: { position: 2, prefix: '--individual-counts' }, doc: "Output individualCounts.[AS_Event].txt files and add the individual count columns to [AS_Event].MATS.JC.txt", default: true }
   anchor_length: { type: 'int?', inputBinding: { position: 2, prefix: '--anchorLength' }, doc: "The anchor length. Tool default: 1" }
   tophat_anchor_length: { type: 'int?', inputBinding: { position: 2, prefix: '--tophatAnchor' }, doc: "The 'anchor length' or 'overhang length' used in the aligner. At least 'anchor length' NT must be mapped to each end of a given junction. (Only if using fastq). Tool default: 6." }
   star_indicies: { type: 'Directory?', inputBinding: { position: 2, prefix: '--bi' }, doc: "The directory name of the STAR binary indices (name of the directory that contains the SA file). (Only if using fastq)" }
   cutoff_splice_diff: { type: 'float?', doc: "The cutoff used in the null hypothesis test for differential splicing. Tool default is 0.0001 for 0.01% difference. Valid: 0 <= cutoff < 1. Does not apply to the paired stats model" }
   stat_off: { type: 'boolean?', inputBinding: { position: 2, prefix: '--statoff' }, doc: "Select to skip statistical analysis, either between two groups or on single sample group. 'true' to add this parameter. Tool default: false" }
   paired_stats: { type: 'boolean?', inputBinding: { position: 2, prefix: '--paired-stats' }, doc: "Use the paired stats model" }
-  novel_splice_sites: { type: 'boolean?', inputBinding: { position: 2, prefix: '--novelSS' }, doc: "Select for novel splice site detection or unannotated splice sites. 'true' to detect or add this parameter, 'false' to disable denovo detection. Tool Default: false" }
+  novel_splice_sites: { type: 'boolean?', inputBinding: { position: 2, prefix: '--novelSS' }, doc: "Select for novel splice site detection or unannotated splice sites. 'true' to detect or add this parameter, 'false' to disable denovo detection. Tool Default: true", default: true }
   maximum_exon_length: { type: 'int?', inputBinding: { position: 2, prefix: '--mel' }, doc: "Maximum Exon Length. Only impacts --novelSS behavior. Tool Default: 500" }
   minimum_intron_length: { type: 'int?', inputBinding: { position: 2, prefix: '--mil' }, doc: "Minimum Intron Length. Only impacts --novelSS behavior. Tool Default: 50" }
   allow_clipping: { type: 'boolean?', inputBinding: { position: 2, prefix: '--allow-clipping' }, doc: "Allow alignments with soft or hard clipping to be used." }
