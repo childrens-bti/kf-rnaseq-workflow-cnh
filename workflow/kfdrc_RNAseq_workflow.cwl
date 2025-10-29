@@ -398,6 +398,8 @@ inputs:
   star_fusion_genome_untar_path: {type: 'string?', doc: "This is what the path will be when genome_tar is unpackaged", default: "GRCh38_v39_CTAT_lib_Mar242022.CUSTOM"}
   read_length_median: {type: 'int?', doc: "The median read length for the reads provided."}
   read_length_stddev: {type: 'float?', doc: "Standard Deviation of the median read length."}
+  bam_strandness_nreads: {type: 'int?', doc: "strandedness nreads (null = tool default)"}
+
   samtools_fastq_cores: {type: 'int?', doc: "Num cores for align2fastq conversion, if input is an alignment file", default: 16}
   STARgenome: {type: File, doc: "Tar gzipped reference that will be unzipped at run time", "sbg:suggestedValue": {class: File, path: 62853e7ad63f7c6d8d7ae5a7,
       name: STAR_2.7.10a_GENCODE39.tar.gz}}
@@ -714,6 +716,7 @@ steps:
         source: preprocess_reads/processed_reads_record
         valueFrom: |
           $(self.some(function(e) { return e.is_paired_end }))
+      n_reads: bam_strandness_nreads
     out: [output, strandedness, read_length_median, read_length_stddev, is_paired_end]
   rmats:
     run: ../workflow/rmats_wf.cwl
