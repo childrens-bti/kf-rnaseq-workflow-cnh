@@ -24,6 +24,7 @@ arguments:
     valueFrom: >-
       && for i in ./$(inputs.output_directory)/*.txt;
       do cp $i $(inputs.output_directory).`basename $i`; done
+      && cp temp/*_read_outcomes_by_bam.txt $(inputs.output_directory).read_outcomes_by_bam.txt 
 inputs:
   gtf_annotation: { type: 'File', inputBinding: { position: 2, prefix: '--gtf' }, doc: "Input gtf annotation file." }
   sample_1: { type: 'File[]', inputBinding: { position: 2, prefix: '--b1', valueFrom: 'sample_1.txt' }, doc: "Input sample 1 bam file." }
@@ -97,7 +98,7 @@ outputs:
   mutually_exclusive_exons_jc: { type: 'File', outputBinding: { glob: '*.MXE.*JC.txt' } }
   retained_introns_jc: { type: 'File', outputBinding: { glob: '*.RI.*JC.txt' } }
   skipped_exons_jc: { type: 'File', outputBinding: { glob: '*.SE.*JC.txt' } }
-  temp_read_outcomes: { type: File, outputBinding: { glob: 'temp/*_read_outcomes_by_bam.txt'} }
+  temp_read_outcomes: { type: File, outputBinding: { glob: '*.read_outcomes_by_bam.txt'} }
   summary_file: { type: File, outputBinding: { glob: '*summary.txt' }}
   fromGTF:
     type: 'File[]?'
