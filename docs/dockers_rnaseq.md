@@ -15,10 +15,12 @@ expression_parse_strand_param.cwl|None
 format_arriba_fusion_file.cwl|pgc-images.sbgenomics.com/d3b-bixu/annofuse:0.92.0
 fusion_annotator.cwl|pgc-images.sbgenomics.com/d3b-bixu/fusionannotator:0.1.1
 kallisto_calc_expression.cwl|images.sbgenomics.com/uros_sipetic/kallisto:0.43.1
-rmats_both_bam.cwl|xinglab/rmats:v4.1.2
+make_null.cwl|None
+rmats_both_bam.cwl|xinglab/rmats:v4.3.0
 rnaseqc_2.4.2.cwl|pgc-images.sbgenomics.com/d3b-bixu/rnaseqc:v2.4.2
 rsem_calc_expression.cwl|images.sbgenomics.com/uros_sipetic/rsem:1.3.1
 samtools_bam_to_cram.cwl|pgc-images.sbgenomics.com/d3b-bixu/samtools:1.9
+samtools_cram_to_bam.cwl|pgc-images.sbgenomics.com/d3b-bixu/samtools:1.9
 samtools_fastq.cwl|pgc-images.sbgenomics.com/d3b-bixu/samtools:1.9
 samtools_head.cwl|staphb/samtools:1.20
 samtools_readlength_bam.cwl|pgc-images.sbgenomics.com/d3b-bixu/samtools:1.9
