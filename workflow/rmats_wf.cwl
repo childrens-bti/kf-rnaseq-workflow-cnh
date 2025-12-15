@@ -118,7 +118,6 @@ steps:
       $(inputs.input_cram.nameext != '.bam')
     in:
       input_cram: sample_1_bams
-      output_basename: output_basename
       reference: reference_fasta
     out: [output]
   samtools_cram_to_bam_sample_2:
@@ -128,7 +127,6 @@ steps:
       $(inputs.input_cram != null && inputs.input_cram.nameext != '.bam')
     in:
       input_cram: sample_2_bams
-      output_basename: output_basename
       reference: reference_fasta
     out: [output]
   make_null_sample_1:

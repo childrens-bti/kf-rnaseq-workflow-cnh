@@ -62,7 +62,7 @@ RNA-SeQC v2.3.4 Generate metrics such as gene and transcript counts, sense/antis
  - [Github](https://github.com/broadinstitute/rnaseqc)
  - [Publication](https://doi.org/10.1093/bioinformatics/btab135)
 ### rMATS
-rMATS turbo v4.1.2 Computational tool to detect differential alternative splicing events from RNA-Seq data.
+rMATS turbo v4.3.0 Computational tool to detect differential alternative splicing events from RNA-Seq data.
  - [Github](https://github.com/Xinglab/rmats-turbo)
  - [Publication](https://doi.org/10.1038/s41596-023-00944-2)
  - [README](docs/D3B_RMATS.md)
