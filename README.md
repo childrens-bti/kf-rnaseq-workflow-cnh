@@ -341,34 +341,34 @@ These are the defaults set by the workflow:
 - `rmats_raw_summary_file`: Table from rMATS providing counts of all calls
 - `rmats_fromGTF`: Array of intermediary files produced by RMATs that are useful for novel splicing analysis
 - `t1k_genotype_tsv`: Genotyping results from T1k
-## Species-specific implementation notes
-This README describes the CNH implementation of the Kids First RNA-Seq workflow across human, mouse, and canine use cases. The core workflow structure is the same across species, but reference inputs and certain optional app settings differ depending on the organism.
-Human: default 
-Mouse: which settings differ, which references are used
-Canine: which settings differ, which references are used
-run_t1k = FALSE for non-human
-fusion_run = FALSE for mouse/canine if applicable
-arriba / T1k not used when references/tools are human-specific
-any custom CAR reference additions for mouse
+### Species-specific implementation notes
+The core workflow structure is the same across species, but reference inputs and certain optional app settings differ depending on the organism.
+## Human
+Human is the default workflow implementation. Human runs can use the full workflow.
+## Mouse
+Mouse runs use mouse-specific genome and annotation references. Human-specific analyses should be disabled unless equivalent species-specific resources are available. 
+In general, set `run_t1k = FALSE`, `run_rmats = FALSE`, `run_fusions = FALSE` and disable fusion-related steps and do not use human-specific Arriba or T1K reference inputs.
+## Canine
+Canine runs use canine-specific genome and annotation references. As with mouse runs, human-specific analyses should be disabled unless species-appropriate resources are available. In general, set `run_t1k = FALSE`, `run_rmats = FALSE`, `run_fusions = FALSE` and disable fusion-related steps and do not use human-specific Arriba or T1K reference inputs.
 ### Reference build notes
-### Human reference build notes
+## Human reference build notes
  - STAR-Fusion reference built with command `/usr/local/STAR-Fusion/ctat-genome-lib-builder/prep_genome_lib.pl --gtf gencode.v39.primary_assembly.annotation.gtf --annot_filter_rule ../AnnotFilterRule.pm --CPU 36 --fusion_annot_lib ../fusion_lib.Mar2021.dat.gz --genome_fa ../GRCh38.primary_assembly.genome.fa --output_dir GRCh38_v39_CTAT_lib_Mar242022.CUSTOM --human_gencode_filter --pfam_db current --dfam_db human 2> build.errs > build.out &`
  - fusion_annotator_ref built by placing GRCh38_v39_CTAT_lib_Mar242022.CUSTOM/fusion_annot_lib.idx and GRCh38_v39_CTAT_lib_Mar242022.CUSTOM/blast_pairs.idx into its own tar ball
  - kallisto index built using RSEM `RSEM_GENCODE39.transcripts.fa` file as transcriptome FASTA, using command: `kallisto index -i RSEM_GENCODE39.transcripts.kallisto.idx RSEM_GENCODE39.transcripts.fa`
  - RNA-SEQc reference built using [collapse GTF script](https://github.com/broadinstitute/gtex-pipeline/blob/master/gene_model/collapse_annotation.py)
    - Two references needed if data are stranded vs. unstranded
    - Flag `--collapse_only` used for stranded
-### Mouse reference build notes
-genome build used (for example GRCm38 vs GRCm39, whichever is current in your implementation)
-annotation source/version
-STAR index build
-RSEM reference build
-Kallisto index build
-RNA-SeQC compatible GTF notes
-any custom CAR sequence generation/inclusion
-how custom FASTA/GTF were modified before index generation
-### Canine reference build notes
-same as mouse
+## Mouse reference build notes
+- STAR reference built using the GRCm39 genome FASTA and GENCODE vM38 primary assembly annotation, packaged as `STAR_2.7.10a_GRCm39_GENCODE38.tar.gz`
+- RSEM reference built using the GRCm39 genome FASTA and GENCODE vM38 primary assembly annotation, packaged as `RSEM_GRCm39_GENCODE38.tar.gz`
+- kallisto index built using the RSEM transcript FASTA file as the transcriptome FASTA, packaged as `RSEM_GRCm39_GENCODE38.transcripts.kallisto.idx`
+- RNA-SeQC reference built using the GENCODE vM38 primary assembly annotation and the [collapse GTF script](https://github.com/broadinstitute/gtex-pipeline/blob/master/gene_model/collapse_annotation.py), packaged as `gencode.vM38. primary_assembly.rnaseqc.stranded.gtf` and `gencode.vM38.primary_assembly.rnaseqc.unstranded.gtf`
+  - Two references are needed if data are stranded vs. unstranded
+## Canine reference build notes
+- STAR reference built using the CanFam 3.1 genome FASTA and canine gene annotation, packaged as `star_CanFam3.1.tar.gz`
+- RSEM reference built using the CanFam 3.1 genome FASTA and canine gene annotation, packaged as `rsem_CanFam3.1.tar.gz`
+- kallisto index built using the canine transcriptome reference, packaged as `kallisto_CanFam3.1.idx`
+- RNA-SeQC reference built using the canine annotation file and provided as `canfam3.1_gtf_stranded.gtf` and `canfam3.1_gtf_unstranded.gtf`
 # [Kids First STAR Diploid Beta](docs/STAR_2.7.11b_DIPLOID.md)
 This is an alternative alignment and quantification method currently in beta phase.
 It uses DNA variant calls from a patient to create a "personal genome" for improved alignment.
