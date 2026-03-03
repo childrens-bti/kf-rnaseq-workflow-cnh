@@ -341,8 +341,11 @@ These are the defaults set by the workflow:
 - `rmats_raw_summary_file`: Table from rMATS providing counts of all calls
 - `rmats_fromGTF`: Array of intermediary files produced by RMATs that are useful for novel splicing analysis
 - `t1k_genotype_tsv`: Genotyping results from T1k
-### Species-specific implementation notes
+### Species-specific implementation
 The core workflow structure is the same across species, but reference inputs and certain optional app settings differ depending on the organism.
+## Note 
+Fusion calling, alternative splicing analysis, and T1K-based variant/genotyping outputs have not been validated for non-human species in the current CNH implementation and should be considered untested for mouse and canine runs.
+
 ## Human
 Human is the default workflow implementation. Human runs can use the full workflow.
 ## Mouse
