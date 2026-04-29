@@ -580,12 +580,11 @@ outputs:
 steps:
   samtools_split:
     run: ../tools/samtools_split.cwl
+    when: $(inputs.input_alignment_files != null)
     scatter: [input_reads]
     scatterMethod: dotproduct
     in:
-      input_reads:
-        source: input_alignment_files
-        default: []
+      input_reads: input_alignment_files
       reference: cram_reference
     out: [bam_files]
   lists_to_reads_records:

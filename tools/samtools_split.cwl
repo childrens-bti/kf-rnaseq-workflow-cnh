@@ -23,7 +23,7 @@ requirements:
           set -xeo pipefail
           RG_NUM=`samtools head $(inputs.input_reads.path) | grep -c ^@RG`
           if [ $RG_NUM != 1 ]; then
-            samtools split -f '%*_%#.bam' -@ $(inputs.cores) $(inputs.reference ? '--reference ' + inputs.reference.path : '') $(inputs.input_reads.path)
+            samtools split -f '%*_%#.bam' -@ $(inputs.cpu) $(inputs.reference ? '--reference ' + inputs.reference.path : '') $(inputs.input_reads.path)
           fi
 baseCommand: []
 arguments:
