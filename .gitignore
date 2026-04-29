@@ -4,3 +4,8 @@ test/
 _local_test/
 !.gitignore
 !.github/
+
+data/
+*.sh
+cavatica/
+logs/
