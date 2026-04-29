@@ -26,7 +26,7 @@ requirements:
           return null;
         }
   - class: ResourceRequirement
-    coresMin: $(inputs.cores)
+    coresMin: $(inputs.cpu)
   - class: DockerRequirement
     dockerPull: 'pgc-images.sbgenomics.com/d3b-bixu/stranded:1.1.0'
 baseCommand: []
