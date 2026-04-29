@@ -69,9 +69,10 @@ steps:
   create_reads_records_am:
     run: ../tools/build_reads_record.cwl
     scatter: [reads1]
-    when: $(inputs.reads1 != null)
     in:
-      reads1: input_alignment_files
+      reads1:
+        source: input_alignment_files
+        default: []
       cram_reference: cram_reference
       is_paired_end: is_paired_end
       r1_adapter: r1_adapter
@@ -93,20 +94,24 @@ steps:
     in:
       reads:
         source: input_se_reads
-        valueFrom: $(self.length)
+        valueFrom: |
+          $(self != null ? self.length : 0)
       in_filelist:
         source: [input_se_rg_strs, input_se_reads]
         valueFrom: |
-          $(self[0] != null ? self[0] : self[1].map(function(e) { return null }))
+          $(self[0] != null ? self[0] : (self[1] != null ? self[1] : []).map(function(e) { return null }))
     out: [out_filelist]
   create_reads_records_se_fq:
     run: ../tools/build_reads_record.cwl
     scatter: [reads1, outSAMattrRGline]
     scatterMethod: dotproduct
-    when: $(inputs.reads1 != null)
     in:
-      reads1: input_se_reads
-      outSAMattrRGline: create_se_reads_null_array/out_filelist
+      reads1:
+        source: input_se_reads
+        default: []
+      outSAMattrRGline:
+        source: create_se_reads_null_array/out_filelist
+        default: []
       r1_adapter: r1_adapter
       min_len: min_len
       quality_base: quality_base
@@ -125,21 +130,27 @@ steps:
     in:
       reads:
         source: input_pe_reads
-        valueFrom: $(self.length)
+        valueFrom: |
+          $(self != null ? self.length : 0)
       in_filelist:
         source: [input_pe_rg_strs, input_pe_reads]
         valueFrom: |
-          $(self[0] != null ? self[0] : self[1].map(function(e) { return null }))
+          $(self[0] != null ? self[0] : (self[1] != null ? self[1] : []).map(function(e) { return null }))
     out: [out_filelist]
   create_reads_records_pe_fq:
     run: ../tools/build_reads_record.cwl
     scatter: [reads1, reads2, outSAMattrRGline]
     scatterMethod: dotproduct
-    when: $(inputs.reads1 != null)
     in:
-      reads1: input_pe_reads
-      reads2: input_pe_mates
-      outSAMattrRGline: create_pe_reads_null_array/out_filelist
+      reads1:
+        source: input_pe_reads
+        default: []
+      reads2:
+        source: input_pe_mates
+        default: []
+      outSAMattrRGline:
+        source: create_pe_reads_null_array/out_filelist
+        default: []
       r1_adapter: r1_adapter
       r2_adapter: r2_adapter
       min_len: min_len
