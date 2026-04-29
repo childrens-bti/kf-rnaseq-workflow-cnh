@@ -533,6 +533,10 @@ inputs:
 outputs:
   cutadapt_stats: {type: 'File[]?', outputSource: preprocess_reads/cutadapt_stats, doc: "Cutadapt stats output, only if adapter is
       supplied."}
+  fastp_adapter_json: {type: 'File[]?', outputSource: preprocess_reads/fastp_json, doc: "fastp adapter detection JSON reports (one per
+      paired-end sample). Contains detected adapter sequences and QC metrics."}
+  fastp_adapter_html: {type: 'File[]?', outputSource: preprocess_reads/fastp_html, doc: "fastp adapter detection HTML reports (one per
+      paired-end sample)."}
   STAR_sorted_genomic_cram: {type: 'File', outputSource: samtools_bam_to_cram/output, doc: "STAR sorted and indexed genomic alignment
       cram"}
   STAR_chimeric_junctions: {type: 'File?', outputSource: fusion_workflow/STAR_chimeric_junctions, doc: "STAR chimeric junctions"}
@@ -576,11 +580,12 @@ outputs:
 steps:
   samtools_split:
     run: ../tools/samtools_split.cwl
-    when: $(inputs.input_reads != null)
     scatter: [input_reads]
     scatterMethod: dotproduct
     in:
-      input_reads: input_alignment_files
+      input_reads:
+        source: input_alignment_files
+        default: []
       reference: cram_reference
     out: [bam_files]
   lists_to_reads_records:
@@ -625,7 +630,7 @@ steps:
       sample_name: sample_name
       output_basename: output_basename
       samtools_fastq_cores: samtools_fastq_cores
-    out: [processed_reads_record, cutadapt_stats]
+    out: [processed_reads_record, cutadapt_stats, fastp_json, fastp_html]
   star_2-7-10a:
     # will get fastq from first non-null in this order - cutadapt, align2fastq, wf input
     run: ../tools/star_2.7.10a_align.cwl
