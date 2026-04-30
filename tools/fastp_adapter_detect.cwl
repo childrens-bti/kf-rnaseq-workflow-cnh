@@ -3,10 +3,10 @@ class: CommandLineTool
 id: fastp_adapter_detect
 label: "fastp v0.23.4 Adapter Detection"
 doc: |
-  Run fastp in adapter-detection-only mode (no trimming).
-  Detects adapters from up to 1M reads and outputs JSON and HTML QC reports.
-  Supports both single-end and paired-end reads; --detect_adapter_for_pe is
-  only added when reads2 is provided.
+  Run fastp to detect adapter sequences and produce JSON and HTML QC reports.
+  Trimmed reads are discarded (/tmp); only the reports are used downstream.
+  Processes up to 1M reads by default. --detect_adapter_for_pe is added
+  automatically when reads2 is provided.
 requirements:
   - class: ShellCommandRequirement
   - class: DockerRequirement
@@ -53,9 +53,9 @@ arguments:
     shellQuote: false
     valueFrom: |
       ${
-        var flags = "--disable_adapter_trimming";
+        var flags = "";
         if (inputs.reads2 != null) {
-          flags += " --detect_adapter_for_pe";
+          flags += "--detect_adapter_for_pe";
         }
         return flags;
       }

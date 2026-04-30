@@ -22,13 +22,8 @@ requirements:
 
           ac = data.get("adapter_cutting", {}) if isinstance(data, dict) else {}
 
-          def clean(v):
-              if isinstance(v, str) and v.strip() and v.strip().lower() != "null":
-                  return v.strip()
-              return ""
-
-          r1 = clean(ac.get("read1_adapter_sequence", ""))
-          r2 = clean(ac.get("read2_adapter_sequence", ""))
+          r1 = ac.get("read1_adapter_sequence", "")
+          r2 = ac.get("read2_adapter_sequence", "")
 
           with open("r1_adapter.txt", "w", encoding="utf-8") as out1:
               out1.write(r1)
