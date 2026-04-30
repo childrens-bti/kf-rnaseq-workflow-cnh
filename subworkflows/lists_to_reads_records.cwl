@@ -68,8 +68,8 @@ outputs:
 steps:
   create_reads_records_am:
     run: ../tools/build_reads_record.cwl
-    when: $(inputs.reads1 != null)
     scatter: [reads1]
+    when: $(inputs.reads1 != null)
     in:
       reads1: input_alignment_files
       cram_reference: cram_reference
@@ -101,9 +101,9 @@ steps:
     out: [out_filelist]
   create_reads_records_se_fq:
     run: ../tools/build_reads_record.cwl
-    when: $(inputs.reads1 != null)
     scatter: [reads1, outSAMattrRGline]
     scatterMethod: dotproduct
+    when: $(inputs.reads1 != null)
     in:
       reads1: input_se_reads
       outSAMattrRGline: create_se_reads_null_array/out_filelist
@@ -133,9 +133,9 @@ steps:
     out: [out_filelist]
   create_reads_records_pe_fq:
     run: ../tools/build_reads_record.cwl
-    when: $(inputs.reads1 != null)
     scatter: [reads1, reads2, outSAMattrRGline]
     scatterMethod: dotproduct
+    when: $(inputs.reads1 != null)
     in:
       reads1: input_pe_reads
       reads2: input_pe_mates
