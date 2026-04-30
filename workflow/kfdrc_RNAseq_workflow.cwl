@@ -580,7 +580,7 @@ outputs:
 steps:
   samtools_split:
     run: ../tools/samtools_split.cwl
-    when: $(inputs.input_alignment_files != null)
+    when: $(inputs.input_reads != null)
     scatter: [input_reads]
     scatterMethod: dotproduct
     in:
