@@ -12,7 +12,7 @@ Our legacy workflow is still available as [v3.0.1](https://github.com/kids-first
 </p>
 
 ## Introduction
-This pipeline has an optional Cutadapt to trim adapters from the raw reads, alignment-to-FASTQ conversion if necessary, and passes the reads to STAR for alignment.
+This pipeline automatically detects adapter sequences using fastp and optionally trims them with Cutadapt before alignment. It also handles alignment-to-FASTQ conversion if necessary, and passes the reads to STAR for alignment.
 The alignment output is used by RSEM for gene expression abundance estimation and rMATS for differential alternative splicing events detection.
 Additionally, Kallisto is used for quantification, but uses pseudoalignments to estimate the gene abundance from the raw data.
 Fusion calling is performed using Arriba and STAR-Fusion detection tools on the STAR alignment outputs.
@@ -24,6 +24,10 @@ If you would like to run this workflow using the CAVATICA public app, a basic pr
 Alternatively, if you would like to run it locally using `cwltool`, a basic primer on that can be found [here](https://www.notion.so/d3b/Starting-From-Scratch-Running-CWLtool-b8dbbde2dc7742e4aff290b0a878344d) and combined with app-specific info from the readme below.
 This workflow is the current production workflow, equivalent to this [CAVATICA public app](https://cavatica.sbgenomics.com/public/apps#cavatica/apps-publisher/kfdrc-rnaseq-workflow).
 
+### fastp
+fastp v0.23.4: Automatic adapter detection from raw reads before trimming.
+ - [Github](https://github.com/OpenGene/fastp)
+ - [Publication](https://doi.org/10.1093/bioinformatics/bty560)
 ### Cutadapt
 Cutadapt v3.4: Cut adapter sequences from raw reads if needed.
  - [Github](https://github.com/marcelm/cutadapt)
@@ -120,9 +124,9 @@ user does not provide the value and the workflow is unable to guess the value, t
 workflow will fail. Please check the error message to see the cause of the failure
 and provide the necessary value.
 
-Users should also provide any adapter information to the workflow. This information includes:
-- `r1_adapter`: If the R1 reads still have adapters, supply the adapter sequence here
-- `r2_adapter`: If the R2 reads still have adapters, supply the adapter sequence here
+The workflow automatically detects adapter sequences using fastp (up to 1M reads sampled per run). Detected adapters are used to run Cutadapt unless none are found, in which case the step is skipped. Users may also supply adapters manually:
+- `r1_adapter`: Override detected R1 adapter with this sequence
+- `r2_adapter`: Override detected R2 adapter with this sequence
 - `min_len`: If trimming adapters, what is the minimum length reads should have post trimming
 - `quality_base`: Phred scale used for quality scores of the reads
 - `quality_cutoff`: Quality trim cutoff, see https://cutadapt.readthedocs.io/en/v3.4/guide.html#quality-trimming for how 5' 3' is handled
@@ -276,9 +280,10 @@ These are the defaults set by the workflow:
    - For PE FASTQ input, please enter the reads 1 file in `reads1` and the reads 2 file in `reads2`.
    - For SE FASTQ input, enter the single ends reads file in `reads1` and leave `reads2` empty as it is optional.
    - For alignment input (SAM/BAM/CRAM), please enter the reads file in `reads1` and leave `reads2` empty as it is optional.
-2. `r1_adapter` and `r2_adapter` are OPTIONAL:
-   - If the input reads have already been trimmed, leave these as null and cutadapt step will simple pass on the FASTQ files to STAR.
-   - If they do need trimming, supply the adapters and the cutadapt step will trim, and pass trimmed FASTQs along.
+2. Adapter trimming is handled automatically:
+   - fastp is run on every input to detect adapters. If adapters are detected, Cutadapt is run automatically.
+   - If no adapters are detected and `r1_adapter` is not supplied, the Cutadapt step is skipped and untrimmed FASTQs are passed directly to STAR.
+   - `r1_adapter` and `r2_adapter` are OPTIONAL overrides. Supply them to force a specific adapter sequence instead of the auto-detected one.
    - `min_len` if adapter is trimmed, currently set to min `20` bp. Change this as you see fit
    - `quality_base` set to Phred scale `33` by default if trimming. There was a weird time when `64` was used - change if different
    - `quality_cutoff` if adapter is trimmed and you want to set a min bp quality. A single value will apply to both paired ends, 2 values will allow you to assign a different one to each (unusual)
