@@ -51,24 +51,14 @@ inputs:
 arguments:
   - position: 5
     shellQuote: false
-    valueFrom: |
-      ${
-        var flags = "";
-        if (inputs.reads2 != null) {
-          flags += "--detect_adapter_for_pe";
-        }
-        return flags;
-      }
+    valueFrom: $(inputs.reads2 != null ? "--detect_adapter_for_pe" : "")
   - position: 6
     shellQuote: false
-    valueFrom: |
-      ${
-        var cmd = "-h " + inputs.sample_name + ".fastp.html -j " + inputs.sample_name + ".fastp.json -o /tmp/fastp_discard_r1.fastq.gz";
-        if (inputs.reads2 != null) {
-          cmd += " -O /tmp/fastp_discard_r2.fastq.gz";
-        }
-        return cmd;
-      }
+    valueFrom: >-
+      -h $(inputs.sample_name).fastp.html
+      -j $(inputs.sample_name).fastp.json
+      -o /tmp/fastp_discard_r1.fastq.gz
+      $(inputs.reads2 != null ? "-O /tmp/fastp_discard_r2.fastq.gz" : "")
 
 outputs:
   fastp_json:
