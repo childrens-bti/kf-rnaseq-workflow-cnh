@@ -71,3 +71,37 @@ outputs:
     doc: "fastp HTML report"
     outputBinding:
       glob: $(inputs.sample_name).fastp.html
+  r1_adapter:
+    type: 'string?'
+    doc: "Detected R1 adapter sequence parsed from fastp JSON"
+    outputBinding:
+      glob: $(inputs.sample_name).fastp.json
+      loadContents: true
+      outputEval: |
+        ${
+          var f = Array.isArray(self) ? self[0] : self;
+          if (!f || !f.contents) {
+            return null;
+          }
+          var json = JSON.parse(f.contents);
+          var ac = json.hasOwnProperty("adapter_cutting") ? json.adapter_cutting : {};
+          var r1 = ac.read1_adapter_sequence;
+          return (r1 != null && String(r1).trim().length > 0) ? r1 : null;
+        }
+  r2_adapter:
+    type: 'string?'
+    doc: "Detected R2 adapter sequence parsed from fastp JSON"
+    outputBinding:
+      glob: $(inputs.sample_name).fastp.json
+      loadContents: true
+      outputEval: |
+        ${
+          var f = Array.isArray(self) ? self[0] : self;
+          if (!f || !f.contents) {
+            return null;
+          }
+          var json = JSON.parse(f.contents);
+          var ac = json.hasOwnProperty("adapter_cutting") ? json.adapter_cutting : {};
+          var r2 = ac.read2_adapter_sequence;
+          return (r2 != null && String(r2).trim().length > 0) ? r2 : null;
+        }

@@ -62,12 +62,7 @@ steps:
         valueFrom: |
           $(self[0] != null ? self[0] : self[1].reads2)
       sample_name: basename_picker/outname
-    out: [fastp_json, fastp_html]
-  extract_fastp_adapters:
-    run: ../tools/fastp_extract_adapters.cwl
-    in:
-      fastp_json: fastp_adapter_detect/fastp_json
-    out: [r1_adapter, r2_adapter]
+    out: [fastp_json, fastp_html, r1_adapter, r2_adapter]
   cutadapt_3-4:
     # Skip if no adapter is available after combining detected and manual values
     run: ../tools/cutadapter_3.4.cwl
@@ -82,11 +77,11 @@ steps:
         valueFrom: |
           $(self[0] != null ? self[0] : self[1].reads2)
       r1_adapter:
-        source: [extract_fastp_adapters/r1_adapter, reads_record]
+        source: [fastp_adapter_detect/r1_adapter, reads_record]
         valueFrom: |
           $(self[0] != null ? self[0] : self[1].r1_adapter)
       r2_adapter:
-        source: [extract_fastp_adapters/r2_adapter, reads_record]
+        source: [fastp_adapter_detect/r2_adapter, reads_record]
         valueFrom: |
           $(self[0] != null ? self[0] : self[1].r2_adapter)
       min_len:
