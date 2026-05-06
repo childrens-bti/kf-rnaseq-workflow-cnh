@@ -76,14 +76,8 @@ steps:
         source: [prepare_aligned_reads/reads2, reads_record]
         valueFrom: |
           $(self[0] != null ? self[0] : self[1].reads2)
-      r1_adapter:
-        source: [fastp_adapter_detect/r1_adapter, reads_record]
-        valueFrom: |
-          $(self[0] != null ? self[0] : self[1].r1_adapter)
-      r2_adapter:
-        source: [fastp_adapter_detect/r2_adapter, reads_record]
-        valueFrom: |
-          $(self[0] != null ? self[0] : self[1].r2_adapter)
+      r1_adapter: fastp_adapter_detect/r1_adapter
+      r2_adapter: fastp_adapter_detect/r2_adapter
       min_len:
         source: reads_record
         valueFrom: $(self.min_len)

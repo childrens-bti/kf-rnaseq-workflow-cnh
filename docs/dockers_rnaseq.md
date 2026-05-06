@@ -12,6 +12,7 @@ basename_picker.cwl|None
 build_reads_record.cwl|None
 cutadapter_3.4.cwl|pgc-images.sbgenomics.com/d3b-bixu/cutadapt:3.4
 expression_parse_strand_param.cwl|None
+fastp_adapter_detect.cwl|quay.io/biocontainers/fastp:0.23.4--h5f740d0_0
 format_arriba_fusion_file.cwl|pgc-images.sbgenomics.com/d3b-bixu/annofuse:0.92.0
 fusion_annotator.cwl|pgc-images.sbgenomics.com/d3b-bixu/fusionannotator:0.1.1
 kallisto_calc_expression.cwl|images.sbgenomics.com/uros_sipetic/kallisto:0.43.1
