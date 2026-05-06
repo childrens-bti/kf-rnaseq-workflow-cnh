@@ -83,12 +83,10 @@ outputs:
     outputBinding:
       glob: $(inputs.sample_name).fastp.json
       loadContents: true
-      outputEval: |
+      outputEval: |-
         ${
           var f = Array.isArray(self) ? self[0] : self;
-          if (!f || !f.contents) {
-            return null;
-          }
+          if (!f || !f.contents) { return null; }
           var json = JSON.parse(f.contents);
           var ac = json.hasOwnProperty("adapter_cutting") ? json.adapter_cutting : {};
           var r1 = ac.read1_adapter_sequence;
@@ -100,12 +98,10 @@ outputs:
     outputBinding:
       glob: $(inputs.sample_name).fastp.json
       loadContents: true
-      outputEval: |
+      outputEval: |-
         ${
           var f = Array.isArray(self) ? self[0] : self;
-          if (!f || !f.contents) {
-            return null;
-          }
+          if (!f || !f.contents) { return null; }
           var json = JSON.parse(f.contents);
           var ac = json.hasOwnProperty("adapter_cutting") ? json.adapter_cutting : {};
           var r2 = ac.read2_adapter_sequence;
