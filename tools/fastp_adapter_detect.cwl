@@ -50,15 +50,21 @@ inputs:
 
 arguments:
   - position: 5
-    shellQuote: false
-    valueFrom: $(inputs.reads2 != null ? "--detect_adapter_for_pe" : "")
+    valueFrom: |
+      $(inputs.reads2 != null ? "--detect_adapter_for_pe" : null)
   - position: 6
-    shellQuote: false
-    valueFrom: >-
-      -h $(inputs.sample_name).fastp.html
-      -j $(inputs.sample_name).fastp.json
-      -o /tmp/fastp_discard_r1.fastq.gz
-      $(inputs.reads2 != null ? "-O /tmp/fastp_discard_r2.fastq.gz" : "")
+    prefix: "-h"
+    valueFrom: $(inputs.sample_name + ".fastp.html")
+  - position: 7
+    prefix: "-j"
+    valueFrom: $(inputs.sample_name + ".fastp.json")
+  - position: 8
+    prefix: "-o"
+    valueFrom: /tmp/fastp_discard_r1.fastq.gz
+  - position: 9
+    prefix: "-O"
+    valueFrom: |
+      $(inputs.reads2 != null ? "/tmp/fastp_discard_r2.fastq.gz" : null)
 
 outputs:
   fastp_json:
