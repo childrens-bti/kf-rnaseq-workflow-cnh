@@ -66,7 +66,7 @@ steps:
   cutadapt_3-4:
     # Skip if no adapter is available after combining detected and manual values
     run: ../tools/cutadapter_3.4.cwl
-    when: $(inputs.r1_adapter != null)
+    when: $(inputs.r1_adapter != null && String(inputs.r1_adapter).trim() != "" && String(inputs.r1_adapter).toLowerCase() != "unspecified")
     in:
       readFilesIn1:
         source: [prepare_aligned_reads/reads1, reads_record]
