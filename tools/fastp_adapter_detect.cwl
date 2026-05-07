@@ -7,6 +7,10 @@ doc: |
   Trimmed reads are discarded (/tmp); only the reports are used downstream.
   Processes up to 1M reads by default. --detect_adapter_for_pe is added
   automatically when reads2 is provided.
+  Adapter sequences are extracted from the fastp JSON to plain text files
+  (r1_adapter.txt, r2_adapter.txt) so downstream steps can consume them
+  without relying on JSON parsing inside CWL expressions (which fails on
+  engines that truncate loadContents to 64 KiB).
 requirements:
   - class: ShellCommandRequirement
   - class: DockerRequirement
@@ -16,7 +20,7 @@ requirements:
     coresMin: $(inputs.threads)
     ramMin: 4000
 
-baseCommand: [fastp]
+baseCommand: []
 
 inputs:
   reads1:
@@ -24,13 +28,13 @@ inputs:
     doc: "R1 FASTQ (or FASTQ.GZ) file"
     inputBinding:
       prefix: "-i"
-      position: 1
+      position: 2
   reads2:
     type: 'File?'
     doc: "R2 FASTQ (or FASTQ.GZ) file for paired-end input"
     inputBinding:
       prefix: "-I"
-      position: 2
+      position: 3
   sample_name:
     type: string
     doc: "Sample name used to name output reports"
@@ -39,32 +43,40 @@ inputs:
     default: 4
     inputBinding:
       prefix: "--thread"
-      position: 3
+      position: 4
   reads_to_process:
     type: 'int?'
     default: 1000000
     doc: "Limit number of reads analysed (speeds up detection)"
     inputBinding:
       prefix: "--reads_to_process"
-      position: 4
+      position: 5
 
 arguments:
-  - position: 5
+  - position: 1
+    shellQuote: false
+    valueFrom: "fastp"
+  - position: 6
     valueFrom: |
       $(inputs.reads2 != null ? "--detect_adapter_for_pe" : null)
-  - position: 6
+  - position: 7
     prefix: "-h"
     valueFrom: $(inputs.sample_name + ".fastp.html")
-  - position: 7
+  - position: 8
     prefix: "-j"
     valueFrom: $(inputs.sample_name + ".fastp.json")
-  - position: 8
+  - position: 9
     prefix: "-o"
     valueFrom: /tmp/fastp_discard_r1.fastq.gz
-  - position: 9
+  - position: 10
     prefix: "-O"
     valueFrom: |
       $(inputs.reads2 != null ? "/tmp/fastp_discard_r2.fastq.gz" : null)
+  - position: 100
+    shellQuote: false
+    valueFrom: >-
+      && sed -n 's/.*"read1_adapter_sequence"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' $(inputs.sample_name).fastp.json > r1_adapter.txt
+      && sed -n 's/.*"read2_adapter_sequence"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' $(inputs.sample_name).fastp.json > r2_adapter.txt
 
 outputs:
   fastp_json:
@@ -79,31 +91,15 @@ outputs:
       glob: $(inputs.sample_name).fastp.html
   r1_adapter:
     type: 'string?'
-    doc: "Detected R1 adapter sequence parsed from fastp JSON"
+    doc: "Detected R1 adapter sequence (empty file => null)"
     outputBinding:
-      glob: $(inputs.sample_name).fastp.json
+      glob: r1_adapter.txt
       loadContents: true
-      outputEval: |-
-        ${
-          var f = Array.isArray(self) ? self[0] : self;
-          if (!f || !f.contents) { return null; }
-          var json = JSON.parse(f.contents);
-          var ac = json.hasOwnProperty("adapter_cutting") ? json.adapter_cutting : {};
-          var r1 = ac.read1_adapter_sequence;
-          return (r1 != null && String(r1).trim().length > 0) ? r1 : null;
-        }
+      outputEval: $(self[0].contents.trim() || null)
   r2_adapter:
     type: 'string?'
-    doc: "Detected R2 adapter sequence parsed from fastp JSON"
+    doc: "Detected R2 adapter sequence (empty file => null)"
     outputBinding:
-      glob: $(inputs.sample_name).fastp.json
+      glob: r2_adapter.txt
       loadContents: true
-      outputEval: |-
-        ${
-          var f = Array.isArray(self) ? self[0] : self;
-          if (!f || !f.contents) { return null; }
-          var json = JSON.parse(f.contents);
-          var ac = json.hasOwnProperty("adapter_cutting") ? json.adapter_cutting : {};
-          var r2 = ac.read2_adapter_sequence;
-          return (r2 != null && String(r2).trim().length > 0) ? r2 : null;
-        }
+      outputEval: $(self[0].contents.trim() || null)
