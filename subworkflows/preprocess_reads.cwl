@@ -26,6 +26,8 @@ outputs:
     type: ../schema/reads_record_type.yml#reads_record
     outputSource: build_out_record/out_rr
   cutadapt_stats: {type: 'File?', outputSource: cutadapt_3-4/cutadapt_stats, doc: "Cutadapt stats output, only if adapter is supplied."}
+  fastp_json: {type: 'File?', outputSource: fastp_adapter_detect/fastp_json, doc: "fastp adapter detection JSON report for input reads."}
+  fastp_html: {type: 'File?', outputSource: fastp_adapter_detect/fastp_html, doc: "fastp adapter detection HTML report for input reads."}
 steps:
   basename_picker:
     run: ../tools/basename_picker.cwl
@@ -47,10 +49,24 @@ steps:
       output_basename: basename_picker/outname
       samtools_fastq_cores: samtools_fastq_cores
     out: [reads1, reads2, is_paired_end, rg_string]
+  fastp_adapter_detect:
+    # Run adapter detection on raw (or align-converted) FASTQs for SE and PE reads
+    run: ../tools/fastp_adapter_detect.cwl
+    in:
+      reads1:
+        source: [prepare_aligned_reads/reads1, reads_record]
+        valueFrom: |
+          $(self[0] != null ? self[0] : self[1].reads1)
+      reads2:
+        source: [prepare_aligned_reads/reads2, reads_record]
+        valueFrom: |
+          $(self[0] != null ? self[0] : self[1].reads2)
+      sample_name: basename_picker/outname
+    out: [fastp_json, fastp_html, r1_adapter, r2_adapter]
   cutadapt_3-4:
-    # Skip if no adapter given, get fastq from prev step if not null or wf input
+    # Skip if no adapter is available after combining detected and manual values
     run: ../tools/cutadapter_3.4.cwl
-    when: $(inputs.r1_adapter.r1_adapter != null)
+    when: $(inputs.r1_adapter != null && String(inputs.r1_adapter).trim() != "" && String(inputs.r1_adapter).toLowerCase() != "unspecified")
     in:
       readFilesIn1:
         source: [prepare_aligned_reads/reads1, reads_record]
@@ -60,12 +76,8 @@ steps:
         source: [prepare_aligned_reads/reads2, reads_record]
         valueFrom: |
           $(self[0] != null ? self[0] : self[1].reads2)
-      r1_adapter:
-        source: reads_record
-        valueFrom: $(self.r1_adapter)
-      r2_adapter:
-        source: reads_record
-        valueFrom: $(self.r2_adapter)
+      r1_adapter: fastp_adapter_detect/r1_adapter
+      r2_adapter: fastp_adapter_detect/r2_adapter
       min_len:
         source: reads_record
         valueFrom: $(self.min_len)

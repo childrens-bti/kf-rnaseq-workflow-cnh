@@ -11,7 +11,7 @@ requirements:
   - class: ShellCommandRequirement
   - class: InlineJavascriptRequirement
   - class: ResourceRequirement
-    coresMin: $(inputs.cores)
+    coresMin: 4
   - class: DockerRequirement
     dockerPull: pgc-images.sbgenomics.com/d3b-bixu/seqkit:2.3.1
 baseCommand: []

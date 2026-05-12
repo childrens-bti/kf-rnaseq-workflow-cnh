@@ -1,9 +1,9 @@
 cwlVersion: v1.2
 class: Workflow
-id: kfdrc-rnaseq-workflow
+id: kfdrc-rnaseq-workflow-cnh
 label: Kids First DRC RNAseq Workflow
 doc: |
-  # Kids First RNA-Seq Workflow V4
+  # Kids First RNA-Seq Workflow V5
 
   This is the Kids First RNA-Seq pipeline, which calculates gene and transcript isoform expression, detects fusions and splice junctions.
   We have transitioned to this current version which upgrades several software components.
@@ -533,6 +533,10 @@ inputs:
 outputs:
   cutadapt_stats: {type: 'File[]?', outputSource: preprocess_reads/cutadapt_stats, doc: "Cutadapt stats output, only if adapter is
       supplied."}
+  fastp_adapter_json: {type: 'File[]?', outputSource: preprocess_reads/fastp_json, doc: "fastp adapter detection JSON reports (one per
+      paired-end sample). Contains detected adapter sequences and QC metrics."}
+  fastp_adapter_html: {type: 'File[]?', outputSource: preprocess_reads/fastp_html, doc: "fastp adapter detection HTML reports (one per
+      paired-end sample)."}
   STAR_sorted_genomic_cram: {type: 'File', outputSource: samtools_bam_to_cram/output, doc: "STAR sorted and indexed genomic alignment
       cram"}
   STAR_chimeric_junctions: {type: 'File?', outputSource: fusion_workflow/STAR_chimeric_junctions, doc: "STAR chimeric junctions"}
@@ -625,7 +629,7 @@ steps:
       sample_name: sample_name
       output_basename: output_basename
       samtools_fastq_cores: samtools_fastq_cores
-    out: [processed_reads_record, cutadapt_stats]
+    out: [processed_reads_record, cutadapt_stats, fastp_json, fastp_html]
   star_2-7-10a:
     # will get fastq from first non-null in this order - cutadapt, align2fastq, wf input
     run: ../tools/star_2.7.10a_align.cwl
@@ -867,5 +871,5 @@ hints:
 - SE
 - STAR
 "sbg:links":
-- id: 'https://github.com/childrens-bti/kf-rnaseq-workflow-cnh/releases/tag/v1.1.0'
+- id: 'https://github.com/childrens-bti/kf-rnaseq-workflow-cnh/releases/tag/v1.2.0'
   label: github-release
