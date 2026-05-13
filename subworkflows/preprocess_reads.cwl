@@ -6,7 +6,8 @@ doc: |
   Pick basename
   Check for pairedness
   Convert to FASTQ
-  Cutadapt
+  Run fastp adapter detection
+  Run cutadapt only for manual adapters or validated fastp-detected Illumina adapters
 requirements:
 - class: SubworkflowFeatureRequirement
 - class: ScatterFeatureRequirement
@@ -25,7 +26,7 @@ outputs:
   processed_reads_record:
     type: ../schema/reads_record_type.yml#reads_record
     outputSource: build_out_record/out_rr
-  cutadapt_stats: {type: 'File?', outputSource: cutadapt_3-4/cutadapt_stats, doc: "Cutadapt stats output, only if adapter is supplied."}
+  cutadapt_stats: {type: 'File?', outputSource: cutadapt_3-4/cutadapt_stats, doc: "Cutadapt stats output, only if manual adapters are supplied or fastp-detected adapters pass safeguards."}
   fastp_json: {type: 'File?', outputSource: fastp_adapter_detect/fastp_json, doc: "fastp adapter detection JSON report for input reads."}
   fastp_html: {type: 'File?', outputSource: fastp_adapter_detect/fastp_html, doc: "fastp adapter detection HTML report for input reads."}
 steps:
@@ -62,12 +63,18 @@ steps:
         source: [prepare_aligned_reads/reads2, reads_record]
         valueFrom: |
           $(self[0] != null ? self[0] : self[1].reads2)
+      manual_r1_adapter:
+        source: reads_record
+        valueFrom: $(self.r1_adapter)
+      manual_r2_adapter:
+        source: reads_record
+        valueFrom: $(self.r2_adapter)
       sample_name: basename_picker/outname
-    out: [fastp_json, fastp_html, r1_adapter, r2_adapter]
+    out: [fastp_json, fastp_html, r1_adapter, r2_adapter, run_cutadapt]
   cutadapt_3-4:
-    # Skip if no adapter is available after combining detected and manual values
+    # Skip if manual adapters are absent and fastp's detected adapters fail percentage/seed safeguards
     run: ../tools/cutadapter_3.4.cwl
-    when: $(inputs.r1_adapter != null && String(inputs.r1_adapter).trim() != "" && String(inputs.r1_adapter).toLowerCase() != "unspecified")
+    when: $(inputs.r1_adapter != null && String(inputs.r1_adapter).trim().length > 0)
     in:
       readFilesIn1:
         source: [prepare_aligned_reads/reads1, reads_record]
