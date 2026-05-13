@@ -35,6 +35,7 @@ steps:
       root_name:
         source: reads_record
         valueFrom: $(self.reads1.basename.split('.')[0])
+      output_basename: output_basename
       sample_name: sample_name
       star_rg_line:
         source: reads_record
@@ -87,10 +88,7 @@ steps:
       quality_cutoff:
         source: reads_record
         valueFrom: $(self.quality_cutoff)
-      sample_name:
-        source: [output_basename, basename_picker/outname]
-        valueFrom: |
-          $(self.filter(function(e) { return e != null }).join('.'))
+      sample_name: basename_picker/outname
     out: [trimmedReadsR1, trimmedReadsR2, cutadapt_stats]
   build_out_record:
     run: ../tools/build_reads_record.cwl
