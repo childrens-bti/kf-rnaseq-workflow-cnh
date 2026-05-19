@@ -126,11 +126,16 @@ doc: |
   and provide the necessary value.
 
   Users should also provide any adapter information to the workflow. This information includes:
-  - `r1_adapter`: If the R1 reads still have adapters, supply the adapter sequence here
-  - `r2_adapter`: If the R2 reads still have adapters, supply the adapter sequence here
+  - `r1_adapter`: If the R1 reads still have known adapters, supply the adapter sequence here. Manual adapters override fastp detection and run cutadapt.
+  - `r2_adapter`: If the R2 reads still have known adapters, supply the adapter sequence here.
   - `min_len`: If trimming adapters, what is the minimum length reads should have post trimming
   - `quality_base`: Phred scale used for quality scores of the reads
   - `quality_cutoff`: Quality trim cutoff, see https://cutadapt.readthedocs.io/en/v3.4/guide.html#quality-trimming for how 5' 3' is handled
+
+  If no manual R1 adapter is supplied, the workflow runs fastp adapter detection.
+  Cutadapt runs on detected adapters only when fastp reports at least 1% adapter-trimmed
+  bases and the detected adapter sequence starts with the Illumina seed AGATCGGA
+  (R1 and R2 for paired-end reads). Otherwise cutadapt is skipped.
 
   At this time the workflow only accepts a single input for these options. If you
   have multiple read groups with unique trimming needs, we recommend pre-trimming
@@ -287,8 +292,9 @@ doc: |
      - For SE FASTQ input, enter the single ends reads file in `reads1` and leave `reads2` empty as it is optional.
      - For alignment input (SAM/BAM/CRAM), please enter the reads file in `reads1` and leave `reads2` empty as it is optional.
   2. `r1_adapter` and `r2_adapter` are OPTIONAL:
-     - If the input reads have already been trimmed, leave these as null and cutadapt step will simple pass on the FASTQ files to STAR.
-     - If they do need trimming, supply the adapters and the cutadapt step will trim, and pass trimmed FASTQs along.
+     - If the input reads have already been trimmed, leave these as null. The workflow will run fastp detection and skip cutadapt unless detected adapters pass safeguards.
+     - If they do need trimming with known adapters, supply the adapters and cutadapt will trim, then pass trimmed FASTQs along.
+     - If adapters are not supplied, cutadapt runs only when fastp reports at least 1% adapter-trimmed bases and the detected adapter sequence starts with AGATCGGA (R1 and R2 for paired-end reads).
      - `min_len` if adapter is trimmed, currently set to min `20` bp. Change this as you see fit
      - `quality_base` set to Phred scale `33` by default if trimming. There was a weird time when `64` was used - change if different
      - `quality_cutoff` if adapter is trimmed and you want to set a min bp quality. A single value will apply to both paired ends, 2 values will allow you to assign a different one to each (unusual)
