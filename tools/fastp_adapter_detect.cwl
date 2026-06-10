@@ -10,7 +10,8 @@ doc: |
   Manual adapters override detected adapters. If no manual R1 adapter is
   provided, detected adapters are selected for cutadapt only when fastp reports
   at least 1% adapter-trimmed bases and the detected adapter sequence starts
-  with the Illumina seed AGATCGGA (R1 and R2 for paired-end reads). Otherwise
+  with standard Illumina adapter seeds: AGATCGGA (TruSeq) or CTGTCTCT (Nextera).
+  For paired-end reads, both R1 and R2 must pass validation. Otherwise
   empty adapter files are emitted and cutadapt is skipped downstream.
 requirements:
   - class: ShellCommandRequirement
@@ -96,7 +97,7 @@ arguments:
       && adapter_pct_ok=false
       && detected_adapters_ok=false
       && if awk -v pct="$adapter_pct" 'BEGIN {exit pct < 1.0}'; then adapter_pct_ok=true; fi
-      && if printf '%s' "$detected_r1" | grep -q '^AGATCGGA' && { [ -z "$(inputs.reads2 != null ? "paired" : "")" ] || printf '%s' "$detected_r2" | grep -q '^AGATCGGA'; }; then detected_adapters_ok=true; fi
+      && if printf '%s' "$detected_r1" | grep -qE '^(AGATCGGA|CTGTCTCT)' && { [ -z "$(inputs.reads2 != null ? "paired" : "")" ] || printf '%s' "$detected_r2" | grep -qE '^(AGATCGGA|CTGTCTCT)'; }; then detected_adapters_ok=true; fi
       && : > r1_adapter.txt
       && : > r2_adapter.txt
       && printf 'false\n' > run_cutadapt.txt
