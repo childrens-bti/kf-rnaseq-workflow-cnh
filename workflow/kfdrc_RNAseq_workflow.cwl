@@ -1,9 +1,9 @@
 cwlVersion: v1.2
 class: Workflow
 id: kfdrc-rnaseq-workflow-cnh
-label: Kids First DRC RNAseq Workflow
+label: Kids First DRC RNAseq Workflow (CNH)
 doc: |
-  # Kids First RNA-Seq Workflow V5
+  # Kids First RNA-Seq Workflow V5 (CNH)
 
   This is the Kids First RNA-Seq pipeline, which calculates gene and transcript isoform expression, detects fusions and splice junctions.
   We have transitioned to this current version which upgrades several software components.
@@ -877,5 +877,5 @@ hints:
 - SE
 - STAR
 "sbg:links":
-- id: 'https://github.com/childrens-bti/kf-rnaseq-workflow-cnh/releases/tag/v1.2.0'
+- id: 'https://github.com/childrens-bti/kf-rnaseq-workflow-cnh/releases/tag/v1.2.2'
   label: github-release
