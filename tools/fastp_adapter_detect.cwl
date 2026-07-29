@@ -1,22 +1,21 @@
 cwlVersion: v1.2
 class: CommandLineTool
 id: fastp_adapter_detect
-label: "fastp v0.23.4 Adapter Detection"
+label: "fastp v1.3.6 Adapter Detection"
 doc: |
   Run fastp to detect adapter sequences and produce JSON and HTML QC reports.
   Trimmed reads are discarded (/tmp); only the reports are used downstream.
   Processes up to 1M reads by default. --detect_adapter_for_pe is added
   automatically when reads2 is provided.
-  Manual adapters override detected adapters. If no manual R1 adapter is
-  provided, detected adapters are selected for cutadapt only when fastp reports
-  at least 1% adapter-trimmed bases and the detected adapter sequence starts
-  with standard Illumina adapter seeds: AGATCGGA (TruSeq) or CTGTCTCT (Nextera).
-  For paired-end reads, both R1 and R2 must pass validation. Otherwise
-  empty adapter files are emitted and cutadapt is skipped downstream.
+  Manual adapters override detected adapters independently for each read end.
+  Detected adapters are selected for cutadapt only when fastp reports at least
+  1% adapter-trimmed bases and each detected sequence starts with a standard
+  Illumina adapter seed: AGATCGGA (TruSeq) or CTGTCTCT (Nextera). Cutadapt runs
+  when at least one read end has a manual or validated detected adapter.
 requirements:
   - class: ShellCommandRequirement
   - class: DockerRequirement
-    dockerPull: 'quay.io/biocontainers/fastp:0.23.4--h5f740d0_0'
+    dockerPull: 'quay.io/biocontainers/fastp:1.3.6--h43da1c4_0'
   - class: InlineJavascriptRequirement
   - class: ResourceRequirement
     coresMin: $(inputs.threads)
@@ -45,7 +44,7 @@ inputs:
     doc: "User-provided R1 adapter. If present and not 'unspecified', it overrides fastp detection."
   manual_r2_adapter:
     type: 'string?'
-    doc: "User-provided R2 adapter. Used with manual_r1_adapter when present; 'unspecified' is treated as empty."
+    doc: "User-provided R2 adapter. Independently overrides R2 detection; 'unspecified' is treated as empty."
   threads:
     type: 'int?'
     default: 4
@@ -95,13 +94,17 @@ arguments:
       && if [ "\$(printf '%s' "$manual_r1" | tr '[:upper:]' '[:lower:]')" = "unspecified" ]; then manual_r1=""; fi
       && if [ "\$(printf '%s' "$manual_r2" | tr '[:upper:]' '[:lower:]')" = "unspecified" ]; then manual_r2=""; fi
       && adapter_pct_ok=false
-      && detected_adapters_ok=false
+      && detected_r1_ok=false
+      && detected_r2_ok=false
       && if awk -v pct="$adapter_pct" 'BEGIN {exit pct < 1.0}'; then adapter_pct_ok=true; fi
-      && if printf '%s' "$detected_r1" | grep -qE '^(AGATCGGA|CTGTCTCT)' && { [ -z "$(inputs.reads2 != null ? "paired" : "")" ] || printf '%s' "$detected_r2" | grep -qE '^(AGATCGGA|CTGTCTCT)'; }; then detected_adapters_ok=true; fi
+      && if printf '%s' "$detected_r1" | grep -qE '^(AGATCGGA|CTGTCTCT)'; then detected_r1_ok=true; fi
+      && if [ -n "$(inputs.reads2 != null ? "paired" : "")" ] && printf '%s' "$detected_r2" | grep -qE '^(AGATCGGA|CTGTCTCT)'; then detected_r2_ok=true; fi
       && : > r1_adapter.txt
       && : > r2_adapter.txt
       && printf 'false\n' > run_cutadapt.txt
-      && if [ -n "$manual_r1" ]; then printf '%s\n' "$manual_r1" > r1_adapter.txt; printf '%s\n' "$manual_r2" > r2_adapter.txt; printf 'true\n' > run_cutadapt.txt; elif [ "$adapter_pct_ok" = true ] && [ "$detected_adapters_ok" = true ]; then printf '%s\n' "$detected_r1" > r1_adapter.txt; printf '%s\n' "$detected_r2" > r2_adapter.txt; printf 'true\n' > run_cutadapt.txt; fi
+      && if [ -n "$manual_r1" ]; then printf '%s\n' "$manual_r1" > r1_adapter.txt; elif [ "$adapter_pct_ok" = true ] && [ "$detected_r1_ok" = true ]; then printf '%s\n' "$detected_r1" > r1_adapter.txt; fi
+      && if [ -n "$(inputs.reads2 != null ? "paired" : "")" ]; then if [ -n "$manual_r2" ]; then printf '%s\n' "$manual_r2" > r2_adapter.txt; elif [ "$adapter_pct_ok" = true ] && [ "$detected_r2_ok" = true ]; then printf '%s\n' "$detected_r2" > r2_adapter.txt; fi; fi
+      && if [ -s r1_adapter.txt ] || [ -s r2_adapter.txt ]; then printf 'true\n' > run_cutadapt.txt; fi
 
 outputs:
   fastp_json:

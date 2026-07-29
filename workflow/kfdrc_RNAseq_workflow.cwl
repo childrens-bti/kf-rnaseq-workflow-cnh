@@ -132,10 +132,11 @@ doc: |
   - `quality_base`: Phred scale used for quality scores of the reads
   - `quality_cutoff`: Quality trim cutoff, see https://cutadapt.readthedocs.io/en/v3.4/guide.html#quality-trimming for how 5' 3' is handled
 
-  If no manual R1 adapter is supplied, the workflow runs fastp adapter detection.
-  Cutadapt runs on detected adapters only when fastp reports at least 1% adapter-trimmed
-  bases and the detected adapter sequence starts with the Illumina seed AGATCGGA
-  (R1 and R2 for paired-end reads). Otherwise cutadapt is skipped.
+  Manual adapters override fastp detection independently for each read end.
+  Each detected adapter is selected independently when fastp reports at least 1%
+  adapter-trimmed bases and its sequence starts with an Illumina seed (AGATCGGA or
+  CTGTCTCT). Cutadapt runs when either adapter is selected, using -a for R1 and -A
+  for R2. If neither adapter is selected, cutadapt is skipped.
 
   At this time the workflow only accepts a single input for these options. If you
   have multiple read groups with unique trimming needs, we recommend pre-trimming
@@ -294,7 +295,7 @@ doc: |
   2. `r1_adapter` and `r2_adapter` are OPTIONAL:
      - If the input reads have already been trimmed, leave these as null. The workflow will run fastp detection and skip cutadapt unless detected adapters pass safeguards.
      - If they do need trimming with known adapters, supply the adapters and cutadapt will trim, then pass trimmed FASTQs along.
-     - If adapters are not supplied, cutadapt runs only when fastp reports at least 1% adapter-trimmed bases and the detected adapter sequence starts with AGATCGGA (R1 and R2 for paired-end reads).
+     - If adapters are not supplied, each read end is evaluated independently; cutadapt runs with `-a` for a validated R1 adapter, `-A` for a validated R2 adapter, or both when both are present.
      - `min_len` if adapter is trimmed, currently set to min `20` bp. Change this as you see fit
      - `quality_base` set to Phred scale `33` by default if trimming. There was a weird time when `64` was used - change if different
      - `quality_cutoff` if adapter is trimmed and you want to set a min bp quality. A single value will apply to both paired ends, 2 values will allow you to assign a different one to each (unusual)
