@@ -879,5 +879,5 @@ hints:
 - SE
 - STAR
 "sbg:links":
-- id: 'https://github.com/childrens-bti/kf-rnaseq-workflow-cnh/releases/tag/v1.2.2'
+- id: 'https://github.com/childrens-bti/kf-rnaseq-workflow-cnh/releases/tag/v1.2.3'
   label: github-release
