@@ -22,8 +22,11 @@ arguments:
     valueFrom: >-
       ${
         var arg = "";
+        if (inputs.r1_adapter && inputs.r1_adapter.trim().length > 0){
+          arg += " -a " + inputs.r1_adapter;
+        }
         if (inputs.r2_adapter && inputs.r2_adapter.trim().length > 0){
-          arg = " -A " + inputs.r2_adapter;
+          arg += " -A " + inputs.r2_adapter;
         }
         return arg;
       }
@@ -32,7 +35,7 @@ arguments:
     valueFrom: >-
       ${
         var arg = "";
-        if (inputs.r2_adapter && inputs.readFilesIn2){
+        if (inputs.readFilesIn2){
           arg = " -p TRIMMED." + inputs.readFilesIn2.basename;
         }
         return arg;
@@ -43,7 +46,7 @@ arguments:
       > $(inputs.sample_name).cutadapt_results.txt
 
 inputs:
-  r1_adapter: { type: string, doc: "read1 adapter sequence", inputBinding: {prefix: "-a", position: 1} }
+  r1_adapter: { type: 'string?', doc: "read1 adapter sequence" }
   r2_adapter: { type: 'string?', doc: "read2 adapter sequence, if paired" }
   min_len: { type: 'int?', doc: "If you do not use this option, reads that have a length of zero (empty reads) are kept in the output", default: 20,
     inputBinding: { prefix: "-m", position: 4 } }

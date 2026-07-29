@@ -72,9 +72,10 @@ steps:
       sample_name: basename_picker/outname
     out: [fastp_json, fastp_html, r1_adapter, r2_adapter, run_cutadapt]
   cutadapt_3-4:
-    # Skip if manual adapters are absent and fastp's detected adapters fail percentage/seed safeguards
+    # Skip if neither read end has a manual or validated fastp-detected adapter
     run: ../tools/cutadapter_3.4.cwl
-    when: $(inputs.r1_adapter != null && String(inputs.r1_adapter).trim().length > 0)
+    when: >-
+      $((inputs.r1_adapter != null && String(inputs.r1_adapter).trim().length > 0) || (inputs.r2_adapter != null && String(inputs.r2_adapter).trim().length > 0))
     in:
       readFilesIn1:
         source: [prepare_aligned_reads/reads1, reads_record]
