@@ -542,9 +542,9 @@ outputs:
   cutadapt_stats: {type: 'File[]?', outputSource: preprocess_reads/cutadapt_stats, doc: "Cutadapt stats output, only if adapter is
       supplied."}
   fastp_adapter_json: {type: 'File[]?', outputSource: preprocess_reads/fastp_json, doc: "fastp adapter detection JSON reports (one per
-      paired-end sample). Contains detected adapter sequences and QC metrics."}
+      processed reads record, for both SE and PE inputs). Contains detected adapter sequences and QC metrics."}
   fastp_adapter_html: {type: 'File[]?', outputSource: preprocess_reads/fastp_html, doc: "fastp adapter detection HTML reports (one per
-      paired-end sample)."}
+      processed reads record, for both SE and PE inputs)."}
   STAR_sorted_genomic_cram: {type: 'File', outputSource: samtools_bam_to_cram/output, doc: "STAR sorted and indexed genomic alignment
       cram"}
   STAR_chimeric_junctions: {type: 'File?', outputSource: fusion_workflow/STAR_chimeric_junctions, doc: "STAR chimeric junctions"}
