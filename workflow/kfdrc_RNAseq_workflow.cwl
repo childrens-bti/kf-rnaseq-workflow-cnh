@@ -357,6 +357,7 @@ doc: |
   - `rmats_raw_summary_file`: Table from rMATS providing counts of all calls
   - `rmats_fromGTF`: Array of intermediary files produced by RMATs that are useful for novel splicing analysis
   - `t1k_genotype_tsv`: Genotyping results from T1k
+  - `bam_strandness_output`: Bam strandness output file with predicted strandedness
 
   ### Reference build notes
    - STAR-Fusion reference built with command `/usr/local/STAR-Fusion/ctat-genome-lib-builder/prep_genome_lib.pl --gtf gencode.v39.primary_assembly.annotation.gtf --annot_filter_rule ../AnnotFilterRule.pm --CPU 36 --fusion_annot_lib ../fusion_lib.Mar2021.dat.gz --genome_fa ../GRCh38.primary_assembly.genome.fa --output_dir GRCh38_v39_CTAT_lib_Mar242022.CUSTOM --human_gencode_filter --pfam_db current --dfam_db human 2> build.errs > build.out &`
@@ -583,6 +584,7 @@ outputs:
   rmats_raw_summary_file: {type: 'File?', outputSource: rmats/raw_summary_file}
   rmats_fromGTF: {type: 'File[]?', outputSource: rmats/rmats_fromGTF}
   t1k_genotype_tsv: {type: 'File?', outputSource: t1k/genotype_tsv, doc: "Genotyping results from T1k"}
+  bam_strandness_output: {type: 'File?', outputSource: bam_strandness/output, doc: "Bam strandness output file with predicted strandedness"}
 steps:
   samtools_split:
     run: ../tools/samtools_split.cwl
@@ -877,5 +879,5 @@ hints:
 - SE
 - STAR
 "sbg:links":
-- id: 'https://github.com/childrens-bti/kf-rnaseq-workflow-cnh/releases/tag/v1.2.2'
+- id: 'https://github.com/childrens-bti/kf-rnaseq-workflow-cnh/releases/tag/v1.2.3'
   label: github-release
