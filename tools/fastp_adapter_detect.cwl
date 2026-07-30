@@ -12,6 +12,9 @@ doc: |
   1% adapter-trimmed bases and each detected sequence starts with a standard
   Illumina adapter seed: AGATCGGA (TruSeq) or CTGTCTCT (Nextera). Cutadapt runs
   when at least one read end has a manual or validated detected adapter.
+  In fastp, a single-end report omits the entire
+  adapter_cutting section when no adapter is detected. Paired-end reports retain
+  the section and report "unspecified" for an end where no adapter is detected.
 requirements:
   - class: ShellCommandRequirement
   - class: DockerRequirement
