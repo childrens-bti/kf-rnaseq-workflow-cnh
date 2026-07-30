@@ -18,18 +18,13 @@ arguments:
     valueFrom: >-
       -o TRIMMED.$(inputs.readFilesIn1.basename)
   - position: 2
-    shellQuote: false
+    prefix: -a
     valueFrom: >-
-      ${
-        var arg = "";
-        if (inputs.r1_adapter && inputs.r1_adapter.trim().length > 0){
-          arg += " -a " + inputs.r1_adapter;
-        }
-        if (inputs.r2_adapter && inputs.r2_adapter.trim().length > 0){
-          arg += " -A " + inputs.r2_adapter;
-        }
-        return arg;
-      }
+      $(inputs.r1_adapter && inputs.r1_adapter.trim().length > 0 ? inputs.r1_adapter : null)
+  - position: 2
+    prefix: -A
+    valueFrom: >-
+      $(inputs.r2_adapter && inputs.r2_adapter.trim().length > 0 ? inputs.r2_adapter : null)
   - position: 3
     shellQuote: false
     valueFrom: >-
