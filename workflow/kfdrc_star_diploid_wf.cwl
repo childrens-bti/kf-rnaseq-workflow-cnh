@@ -348,8 +348,7 @@ steps:
   cutadapt_3-4:
     # Skip if no adapter given, get fastq from prev step if not null or wf input
     run: ../tools/cutadapter_3.4.cwl
-    when: >-
-      $((inputs.r1_adapter != null && String(inputs.r1_adapter).trim().length > 0) || (inputs.r2_adapter != null && String(inputs.r2_adapter).trim().length > 0))
+    when: $(inputs.r1_adapter != null)
     in:
       readFilesIn1:
         source: [align2fastq/fq1, reads1]
