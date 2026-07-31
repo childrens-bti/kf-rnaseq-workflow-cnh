@@ -25,7 +25,7 @@ Alternatively, if you would like to run it locally using `cwltool`, a basic prim
 This workflow is the current production workflow, equivalent to this [CAVATICA public app](https://cavatica.sbgenomics.com/public/apps#cavatica/apps-publisher/kfdrc-rnaseq-workflow).
 
 ### fastp
-fastp v0.23.4: Automatic adapter detection from raw reads before trimming.
+fastp v1.3.6: Automatic adapter detection from raw reads before trimming.
  - [Github](https://github.com/OpenGene/fastp)
  - [Publication](https://doi.org/10.1093/bioinformatics/bty560)
 ### Cutadapt
@@ -127,6 +127,7 @@ and provide the necessary value.
 The workflow automatically detects adapter sequences using fastp (up to 1M reads sampled per run). Adapter sequences are parsed directly from the fastp JSON report in the same detection step. Detected adapters are used to run Cutadapt unless none are found, in which case the step is skipped. Users may also supply adapters manually:
 - `r1_adapter`: Override detected R1 adapter with this sequence
 - `r2_adapter`: Override detected R2 adapter with this sequence
+Each read end is handled independently: Cutadapt uses `-a` for R1 and `-A` for R2 when the corresponding adapter exists.
 - `min_len`: If trimming adapters, what is the minimum length reads should have post trimming
 - `quality_base`: Phred scale used for quality scores of the reads
 - `quality_cutoff`: Quality trim cutoff, see https://cutadapt.readthedocs.io/en/v3.4/guide.html#quality-trimming for how 5' 3' is handled
@@ -282,7 +283,7 @@ These are the defaults set by the workflow:
    - For alignment input (SAM/BAM/CRAM), please enter the reads file in `reads1` and leave `reads2` empty as it is optional.
 2. Adapter trimming is handled automatically:
    - fastp is run on every input to detect adapters, and adapter sequences are read directly from the generated fastp JSON report. If adapters are detected, Cutadapt is run automatically.
-   - If no adapters are detected and `r1_adapter` is not supplied, the Cutadapt step is skipped and untrimmed FASTQs are passed directly to STAR.
+   - If neither adapter is detected or supplied, the Cutadapt step is skipped and untrimmed FASTQs are passed directly to STAR.
    - `r1_adapter` and `r2_adapter` are OPTIONAL overrides. Supply them to force a specific adapter sequence instead of the auto-detected one.
    - `min_len` if adapter is trimmed, currently set to min `20` bp. Change this as you see fit
    - `quality_base` set to Phred scale `33` by default if trimming. There was a weird time when `64` was used - change if different
