@@ -15,7 +15,7 @@ outputs:
 
 expression: |
   ${
-    var qc_file = inputs.strandedness ? inputs.stranded_file : inputs.unstranded_file;
+    var qc_file = inputs.strandedness == "default" ? inputs.unstranded_file : inputs.stranded_file;
     return {
       qc_file
     }
