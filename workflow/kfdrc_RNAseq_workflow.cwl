@@ -133,10 +133,11 @@ doc: |
   - `quality_cutoff`: Quality trim cutoff, see https://cutadapt.readthedocs.io/en/v3.4/guide.html#quality-trimming for how 5' 3' is handled
 
   Manual adapters override fastp detection independently for each read end.
-  Each detected adapter is selected independently when fastp reports at least 1%
-  adapter-trimmed bases and its sequence starts with an Illumina seed (AGATCGGA or
-  CTGTCTCT). Cutadapt runs when either adapter is selected, using -a for R1 and -A
-  for R2. If neither adapter is selected, cutadapt is skipped.
+  Each detected adapter is selected independently only when fastp identifies its
+  exact sequence in the built-in known-adapter pool. Fastp's less-than-1% warning
+  is informational and does not reject a known adapter. De novo and unspecified
+  detections are rejected. Cutadapt runs when either adapter is selected, using
+  -a for R1 and -A for R2. If neither adapter is selected, cutadapt is skipped.
 
   At this time the workflow only accepts a single input for these options. If you
   have multiple read groups with unique trimming needs, we recommend pre-trimming
