@@ -5,7 +5,7 @@ requirements:
   - class: InlineJavascriptRequirement
 
 inputs:
-  strandedness: string
+  strandedness: 'string?'
   stranded_file: 'File'
   unstranded_file: 'File'
 
@@ -15,7 +15,7 @@ outputs:
 
 expression: |
   ${
-    var qc_file = inputs.strandedness == "default" ? inputs.unstranded_file : inputs.stranded_file;
+    var qc_file = inputs.strandedness ? inputs.stranded_file : inputs.unstranded_file;
     return {
       qc_file
     }
