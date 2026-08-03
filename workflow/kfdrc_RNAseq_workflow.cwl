@@ -257,7 +257,8 @@ doc: |
   - `compress_chimeric_junction`: If part of a workflow, recommend compressing this file as final output
 
   ### RNAseQC
-  - `RNAseQC_GTF`: GTF file from `gtf_anno` that has been collapsed GTEx-style
+  - `RNAseQC_GTF_stranded`: Stranded GTF file from `gtf_anno` that has been collapsed GTEx-style
+  - `RNAseQC_GTF_unstranded`: Unstranded GTF file from `gtf_anno` that has been collapsed GTEx-style
 
   ### kallisto
   - `kallisto_idx`: Specialized index of a **transcriptome** FASTA file for kallisto
@@ -509,8 +510,10 @@ inputs:
       name: GRCh38_v39_CTAT_lib_Mar242022.CUSTOM.tar.gz}}
   compress_chimeric_junction: {type: 'boolean?', default: true, doc: 'If part of a workflow, recommend compressing this file as final
       output'}
-  RNAseQC_GTF: {type: 'File', doc: "gtf file from `gtf_anno` that has been collapsed GTEx-style", "sbg:suggestedValue": {class: File,
+  RNAseQC_GTF_stranded: {type: 'File', doc: "stranded gtf file from `gtf_anno` that has been collapsed GTEx-style", "sbg:suggestedValue": {class: File,
       path: 62853e7ad63f7c6d8d7ae5a3, name: gencode.v39.primary_assembly.rnaseqc.stranded.gtf}}
+  RNAseQC_GTF_unstranded: {type: 'File', doc: "unstranded gtf file from `gtf_anno` that has been collapsed GTEx-style", "sbg:suggestedValue": {class: File,
+      path: 62853e95d63f7c6d8d7ae5b1, name: gencode.v39.primary_assembly.rnaseqc.unstranded.gtf}}
   kallisto_idx: {type: 'File', doc: "Specialized index of a **transcriptome** fasta file for kallisto", "sbg:suggestedValue": {class: File,
       path: 62853e7ad63f7c6d8d7ae5a6, name: RSEM_GENCODE39.transcripts.kallisto.idx}}
   RSEMgenome: {type: 'File', doc: "RSEM reference tar ball", "sbg:suggestedValue": {class: File, path: 62853e7ad63f7c6d8d7ae5a5, name: RSEM_GENCODE39.tar.gz}}
@@ -782,11 +785,18 @@ steps:
       outFileNamePrefix: basename_picker/outname
       strandedness: strand_parse/rsem_std
     out: [gene_out, isoform_out]
+  qc_file_picker:
+    run: ../tools/qc_file_picker.cwl
+    in:
+      strandedness: strand_parse/rnaseqc_std
+      stranded_file: RNAseQC_GTF_stranded
+      unstranded_file: RNAseQC_GTF_unstranded
+    out: [qc_file]
   rna_seqc:
     run: ../tools/rnaseqc_2.4.2.cwl
     in:
       aligned_sorted_reads: samtools_sort/sorted_bam
-      collapsed_gtf: RNAseQC_GTF
+      collapsed_gtf: qc_file_picker/qc_file
       stranded: strand_parse/rnaseqc_std
       unpaired:
         source: bam_strandness/is_paired_end
