@@ -20,7 +20,7 @@ inputs:
     inputBinding: { position: 1} }
   output_dirname: { type: 'string?', default: "output", doc: "output dirname",
     inputBinding: { position: 2} }
-  stranded: { type: [ 'null', {type: enum, name: rnaseqc_std, symbols: ["rf", "fr"]}], doc: "If stranded, specify", default: "rf",
+  stranded: { type: [ 'null', {type: enum, name: rnaseqc_std, symbols: ["rf", "fr"]}], doc: "If stranded, specify",
     inputBinding: { position: 3, prefix: "--stranded=", separate: false} }
   unpaired: { type: 'boolean?', doc: "If single-end, set to true", default: false,
     inputBinding: { position: 3, prefix: "--unpaired"} }
