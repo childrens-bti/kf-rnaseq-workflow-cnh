@@ -7,7 +7,7 @@ doc: |
   Check for pairedness
   Convert to FASTQ
   Run fastp adapter detection
-  Run cutadapt only for manual adapters or validated fastp-detected Illumina adapters
+  Run cutadapt only for manual adapters or adapters from fastp's built-in pool
 requirements:
 - class: SubworkflowFeatureRequirement
 - class: ScatterFeatureRequirement

@@ -124,7 +124,7 @@ user does not provide the value and the workflow is unable to guess the value, t
 workflow will fail. Please check the error message to see the cause of the failure
 and provide the necessary value.
 
-The workflow automatically detects adapter sequences using fastp (up to 1M reads sampled per run). Adapter sequences are parsed directly from the fastp JSON report in the same detection step. Detected adapters are used to run Cutadapt unless none are found, in which case the step is skipped. Users may also supply adapters manually:
+The workflow automatically detects adapter sequences using fastp (up to 1M reads sampled per run). Adapter sequences are parsed from the fastp JSON report and checked against fastp's built-in known-adapter pool. Known adapters are passed to Cutadapt even when fastp reports less than 1% adapter content; de novo or otherwise unrecognized detections are skipped. If no known or manually supplied adapter remains, Cutadapt is skipped. Users may also supply adapters manually:
 - `r1_adapter`: Override detected R1 adapter with this sequence
 - `r2_adapter`: Override detected R2 adapter with this sequence
 Each read end is handled independently: Cutadapt uses `-a` for R1 and `-A` for R2 when the corresponding adapter exists.
@@ -282,8 +282,9 @@ These are the defaults set by the workflow:
    - For SE FASTQ input, enter the single ends reads file in `reads1` and leave `reads2` empty as it is optional.
    - For alignment input (SAM/BAM/CRAM), please enter the reads file in `reads1` and leave `reads2` empty as it is optional.
 2. Adapter trimming is handled automatically:
-   - fastp is run on every input to detect adapters, and adapter sequences are read directly from the generated fastp JSON report. If adapters are detected, Cutadapt is run automatically.
-   - If neither adapter is detected or supplied, the Cutadapt step is skipped and untrimmed FASTQs are passed directly to STAR.
+   - fastp is run on every input to detect adapters, and adapter sequences are read from the generated fastp JSON report and checked against fastp's built-in known-adapter pool.
+   - Known fastp adapters are passed to Cutadapt even when fastp reports less than 1% adapter content. De novo or otherwise unrecognized detections are skipped.
+   - If neither a known adapter nor a manual adapter is selected, the Cutadapt step is skipped and untrimmed FASTQs are passed directly to STAR.
    - `r1_adapter` and `r2_adapter` are OPTIONAL overrides. Supply them to force a specific adapter sequence instead of the auto-detected one.
    - `min_len` if adapter is trimmed, currently set to min `20` bp. Change this as you see fit
    - `quality_base` set to Phred scale `33` by default if trimming. There was a weird time when `64` was used - change if different
@@ -319,7 +320,7 @@ These are the defaults set by the workflow:
    - Additionally for FASTQ inputs, if no `outSAMattrRGline` input is provided a disclaimer will be added to the `@RG` header line that reads: `DS:Values for this read group were auto-generated and may not reflect the true read group information.`
 
 ## Outputs
-- `cutadapt_stats`: Cutadapt stats output, only if an adapter is detected or supplied.
+- `cutadapt_stats`: Cutadapt stats output, only if a known fastp adapter is selected or an adapter is supplied manually.
 - `STAR_sorted_genomic_cram`: STAR sorted and indexed genomic alignment CRAM
 - `STAR_chimeric_junctions`: STAR chimeric junctions
 - `STAR_gene_count`: STAR genecounts
